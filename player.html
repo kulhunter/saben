@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>¡SABEN! - Jugar</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Ocultamos el tablero de juego al inicio */
+    #zona-juego { display: none; }
+  </style>
+</head>
+<body style="background-image: none; background-color: var(--yellow);">
+  
+  <h1 class="logo" style="font-size: 4rem; margin-top: 20px;">¡SABEN!</h1>
+
+  <div class="comic-box" id="zona-ingreso" style="margin-top: 10px;">
+    <h2 style="margin-top: 0;">Entra al Show</h2>
+    <input type="text" id="nombre-jugador" placeholder="Tu Apodo..." autocomplete="off">
+    <button class="btn-comic" onclick="unirseAlShow()" id="btn-unirse">¡VOY!</button>
+    <p id="mensaje-error" style="color: red; font-weight: bold; display: none;"></p>
+  </div>
+
+  <div id="zona-juego" style="padding: 10px;">
+    <h2 style="background: var(--white); border: 4px solid var(--black); padding: 10px; box-shadow: 4px 4px 0 var(--black);">¡ATENTO A LA PANTALLA!</h2>
+    <div class="grid-opciones">
+      <div class="card-opcion bg-cyan" onclick="enviarVoto('A')">A</div>
+      <div class="card-opcion bg-magenta" onclick="enviarVoto('B')">B</div>
+      <div class="card-opcion bg-yellow" onclick="enviarVoto('C')">C</div>
+      <div class="card-opcion bg-green" onclick="enviarVoto('D')">D</div>
+    </div>
+  </div>
+
+  <script>
+    async function unirseAlShow() {
+      const nombre = document.getElementById('nombre-jugador').value.trim();
+      const errorMsg = document.getElementById('mensaje-error');
+      
+      if (!nombre) {
+        errorMsg.innerText = "¡Escribe un apodo primero!";
+        errorMsg.style.display = "block";
+        return;
+      }
+
+      document.getElementById('btn-unirse').innerText = "ENTRANDO...";
+
+      try {
+        const res = await fetch('/api/join', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: nombre, roomId: 'SABEN_ROOM_1' })
+        });
+        
+        const data = await res.json();
+        
+        if (data.success) {
+          // Cambiamos a la vista de botones
+          document.getElementById('zona-ingreso').style.display = 'none';
+          document.getElementById('zona-juego').style.display = 'block';
+        } else {
+          errorMsg.innerText = "Hubo un error al entrar.";
+          errorMsg.style.display = "block";
+          document.getElementById('btn-unirse').innerText = "¡VOY!";
+        }
+      } catch (e) {
+        errorMsg.innerText = "Error de conexión. Intenta de nuevo.";
+        errorMsg.style.display = "block";
+        document.getElementById('btn-unirse').innerText = "¡VOY!";
+      }
+    }
+
+    function enviarVoto(opcion) {
+      // Por ahora solo da feedback visual. Aquí luego conectaremos con KV para sumar puntos.
+      alert(`¡Votaste la opción ${opcion}! Espera los resultados.`);
+    }
+  </script>
+</body>
+</html>
