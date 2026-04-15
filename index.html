@@ -3,15 +3,72 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>¡SABEN.cl! - El juego para jugar en familia ¿cuánto se conocen realmente?</title>
+  <title>¡SABEN.cl! - El juego en familia GRATIS </title>
   <link rel="stylesheet" href="styles.css">
   <style>
-    /* Estilos exclusivos para la pantalla gigante (TV) */
+    /* 1. EL NUEVO CONTENEDOR DEL LOGO EN LA ESQUINA */
+    .header-container {
+      width: 100%;
+      display: flex;
+      justify-content: flex-start; /* Alinea a la izquierda */
+      padding: 10px 20px;
+      box-sizing: border-box;
+    }
+
+    .banner-saben-esquina {
+      background-color: #5cf2e9;
+      background-image: 
+        radial-gradient(var(--black) 15%, transparent 16%), 
+        radial-gradient(var(--black) 15%, transparent 16%);
+      background-size: 20px 20px;
+      background-position: 0 0, 10px 10px;
+      padding: 15px 25px;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      border-radius: 10px;
+      border: 4px solid var(--black);
+      box-shadow: 6px 6px 0 var(--magenta);
+      transform: rotate(-3deg);
+      z-index: 10;
+    }
+
+    .logo-saben-esquina {
+      font-family: 'Bangers', cursive;
+      font-size: 4rem; /* Tamaño reducido para la esquina */
+      color: #fad14b;
+      margin: 0;
+      line-height: 1;
+      letter-spacing: 2px;
+      text-shadow:
+        -2px -2px 0 var(--black),
+         2px -2px 0 var(--black),
+        -2px  2px 0 var(--black),
+         2px  2px 0 var(--black),
+         5px  5px 0 var(--black), 
+         8px  8px 0 var(--magenta); 
+    }
+
+    .subtitulo-saben-esquina {
+      font-family: 'Comic Neue', cursive;
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: #fad14b;
+      background-color: var(--black);
+      padding: 5px 15px;
+      margin-top: 5px;
+      border: 3px solid var(--white);
+      transform: rotate(1deg);
+      text-transform: uppercase;
+      box-shadow: 3px 3px 0 var(--black);
+    }
+
+    /* 2. LAYOUT DE LOS PANELES AJUSTADO */
     .tv-layout {
       display: flex;
       flex-wrap: wrap;
       gap: 30px;
-      margin: 40px auto;
+      margin: 10px auto 40px auto; /* Reduje el margen superior */
       max-width: 1200px;
       justify-content: center;
       align-items: stretch;
@@ -34,11 +91,11 @@
     }
 
     .qr-container {
-      margin: 20px 0;
+      margin: 15px 0;
     }
 
     .qr-container img {
-      width: 250px;
+      width: 220px; /* Un poco más pequeño para que no quite tanto espacio */
       border: 8px solid var(--black);
       border-radius: 10px;
       box-shadow: 6px 6px 0 var(--cyan);
@@ -73,7 +130,7 @@
 
     /* El Banner de Créditos de Dan */
     .footer-credito {
-      margin-top: 60px;
+      margin-top: 20px;
       font-family: 'Bangers', cursive;
       font-size: 1.8rem;
       background: var(--black);
@@ -100,8 +157,12 @@
 </head>
 <body>
   
-  <h1 class="logo">¡SABEN.cl!</h1>
-  <h2 style="background: var(--black); color: var(--yellow); display: inline-block; padding: 5px 25px; transform: rotate(1deg); border: 3px solid var(--white);">EL JUEGO DE NUESTRA FAMILIA</h2>
+  <div class="header-container">
+    <div class="banner-saben-esquina">
+      <h1 class="logo-saben-esquina">¡SABEN.cl!</h1>
+      <div class="subtitulo-saben-esquina">EL JUEGO DE NUESTRA FAMILIA</div>
+    </div>
+  </div>
 
   <div class="tv-layout">
     
@@ -113,7 +174,9 @@
         <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://saben.cl/player.html" alt="QR Code">
       </div>
       
-      <p style="font-size: 1.3rem;">o entra desde el navegador a:<br><strong style="font-size: 1.8rem; background: var(--yellow); padding: 5px 10px; border: 3px solid var(--black);">saben.cl/player.html</strong></p>
+      <p style="font-size: 1.3rem; line-height: 1.6; margin-top: 20px;">o entra desde el navegador a:<br>
+        <strong style="display: inline-block; margin-top: 10px; font-size: 1.8rem; background: var(--yellow); padding: 8px 15px; border: 3px solid var(--black); box-shadow: 4px 4px 0 var(--cyan);">https://saben.cl/player.html</strong>
+      </p>
     </div>
 
     <div class="panel-comic panel-amarillo">
@@ -145,10 +208,9 @@
         const contenedor = document.getElementById('lista-jugadores');
         const contador = document.getElementById('contador');
         
-        // Solo actualizamos el DOM si la cantidad de jugadores cambió (para no resetear animaciones)
         if (parseInt(contador.innerText) !== data.players.length) {
             contador.innerText = data.players.length;
-            contenedor.innerHTML = ''; // Limpiamos la lista
+            contenedor.innerHTML = ''; 
             
             if (data.players.length === 0) {
                 contenedor.innerHTML = '<p style="font-size: 1.2rem; color: #555; width: 100%;">Esperando que entre el primer sabiondo...</p>';
@@ -156,7 +218,6 @@
                 data.players.forEach(jugador => {
                     const div = document.createElement('div');
                     div.className = 'player-tag';
-                    // Pequeña variación de rotación para que se vean desordenados como recortes de cómic
                     const rotacion = Math.floor(Math.random() * 10) - 5; 
                     div.style.transform = `rotate(${rotacion}deg)`;
                     div.innerText = jugador.name;
