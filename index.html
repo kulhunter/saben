@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>¡SABEN! - El Show</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Estilos exclusivos para la pantalla gigante (TV) */
+    .tv-layout {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      margin: 40px auto;
+      max-width: 1200px;
+      justify-content: center;
+      align-items: stretch;
+    }
+    
+    .panel-comic {
+      flex: 1;
+      min-width: 350px;
+      background: var(--white);
+      border: 6px solid var(--black);
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 12px 12px 0px var(--magenta);
+      position: relative;
+    }
+
+    .panel-amarillo {
+      background-color: var(--yellow);
+      box-shadow: 12px 12px 0px var(--cyan);
+    }
+
+    .qr-container {
+      margin: 20px 0;
+    }
+
+    .qr-container img {
+      width: 250px;
+      border: 8px solid var(--black);
+      border-radius: 10px;
+      box-shadow: 6px 6px 0 var(--cyan);
+      transition: transform 0.3s;
+    }
+
+    .qr-container img:hover {
+      transform: scale(1.05) rotate(3deg);
+    }
+
+    .pulse-text {
+      animation: pulse 1.5s infinite;
+      color: var(--magenta);
+      font-weight: bold;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    .lista-scroll {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 20px;
+      min-height: 200px;
+      align-content: flex-start;
+    }
+
+    /* El Banner de Créditos de Dan */
+    .footer-credito {
+      margin-top: 60px;
+      font-family: 'Bangers', cursive;
+      font-size: 1.8rem;
+      background: var(--black);
+      color: var(--yellow);
+      display: inline-block;
+      padding: 10px 40px;
+      border: 4px solid var(--white);
+      box-shadow: 8px 8px 0 var(--magenta);
+      transform: rotate(-1deg);
+      letter-spacing: 1px;
+    }
+
+    .footer-credito a {
+      color: var(--cyan);
+      text-decoration: none;
+      text-shadow: 2px 2px 0 var(--magenta);
+    }
+
+    .footer-credito a:hover {
+      color: var(--white);
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  
+  <h1 class="logo">¡SABEN!</h1>
+  <h2 style="background: var(--black); color: var(--yellow); display: inline-block; padding: 5px 25px; transform: rotate(1deg); border: 3px solid var(--white);">EL SHOW DE NUESTRA FAMILIA</h2>
+
+  <div class="tv-layout">
+    
+    <div class="panel-comic">
+      <h3 style="font-size: 2.5rem; margin-top: 0; text-transform: uppercase;">1. Escanea para jugar</h3>
+      <p style="font-size: 1.5rem;">Apunta tu cámara aquí 👇</p>
+      
+      <div class="qr-container">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://tusitio.cl/player.html" alt="QR Code">
+      </div>
+      
+      <p style="font-size: 1.3rem;">o entra desde el navegador a:<br><strong style="font-size: 1.8rem; background: var(--yellow); padding: 5px 10px; border: 3px solid var(--black);">tu-dominio.cl/player.html</strong></p>
+    </div>
+
+    <div class="panel-comic panel-amarillo">
+      <h3 style="font-size: 2.5rem; margin-top: 0; text-transform: uppercase;">2. Camerino VIP</h3>
+      <p class="pulse-text" style="font-size: 1.8rem;">Jugadores Listos: <span id="contador" style="background: var(--black); color: var(--white); padding: 2px 10px; border-radius: 5px;">0</span></p>
+      
+      <hr style="border: 3px solid var(--black); margin: 20px 0;">
+      
+      <div id="lista-jugadores" class="lista-scroll">
+        <p style="font-size: 1.2rem; color: #555; width: 100%;">Esperando que entre el primer sabiondo...</p>
+      </div>
+
+      <button class="btn-comic" style="margin-top: auto; position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%); width: 80%;" onclick="alert('¡Pronto programaremos la lógica para lanzar la Ronda 1!')">¡ZAP! Empezar Show</button>
+    </div>
+
+  </div>
+
+  <div class="footer-credito">
+    ⚡ Creado por <a href="https://dan.tagle.cl" target="_blank">dan.tagle.cl</a> 100% GRATIS para el mundo 🌎
+  </div>
+
+  <script>
+    // Polling: Leemos la API cada 3 segundos para actualizar la pantalla
+    setInterval(async () => {
+      try {
+        const res = await fetch('/api/room');
+        const data = await res.json();
+        
+        const contenedor = document.getElementById('lista-jugadores');
+        const contador = document.getElementById('contador');
+        
+        // Solo actualizamos el DOM si la cantidad de jugadores cambió (para no resetear animaciones)
+        if (parseInt(contador.innerText) !== data.players.length) {
+            contador.innerText = data.players.length;
+            contenedor.innerHTML = ''; // Limpiamos la lista
+            
+            if (data.players.length === 0) {
+                contenedor.innerHTML = '<p style="font-size: 1.2rem; color: #555; width: 100%;">Esperando que entre el primer sabiondo...</p>';
+            } else {
+                data.players.forEach(jugador => {
+                    const div = document.createElement('div');
+                    div.className = 'player-tag';
+                    // Pequeña variación de rotación para que se vean desordenados como recortes de cómic
+                    const rotacion = Math.floor(Math.random() * 10) - 5; 
+                    div.style.transform = `rotate(${rotacion}deg)`;
+                    div.innerText = jugador.name;
+                    contenedor.appendChild(div);
+                });
+            }
+        }
+      } catch (e) {
+        console.error('Buscando señal del show...', e);
+      }
+    }, 3000);
+  </script>
+</body>
+</html>
