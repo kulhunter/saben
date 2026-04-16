@@ -3,234 +3,775 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>¡SABEN.cl! - El juego en familia GRATIS </title>
+  <title>¡SABEN.cl! — Panel del Anfitrión</title>
+  <meta name="description" content="SABEN: El juego de trivia personalizado para eventos y reuniones familiares. Proyecta en la TV, juega desde el celular.">
   <link rel="stylesheet" href="styles.css">
   <style>
-    /* 1. EL NUEVO CONTENEDOR DEL LOGO EN LA ESQUINA */
-    .header-container {
-      width: 100%;
+    /* ── HOST-SPECIFIC LAYOUT ── */
+    #app {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 20px;
+      min-height: 100vh;
       display: flex;
-      justify-content: flex-start; /* Alinea a la izquierda */
-      padding: 10px 20px;
-      box-sizing: border-box;
-    }
-
-    .banner-saben-esquina {
-      background-color: #5cf2e9;
-      background-image: 
-        radial-gradient(var(--black) 15%, transparent 16%), 
-        radial-gradient(var(--black) 15%, transparent 16%);
-      background-size: 20px 20px;
-      background-position: 0 0, 10px 10px;
-      padding: 15px 25px;
-      display: inline-flex;
       flex-direction: column;
-      align-items: center;
-      border-radius: 10px;
-      border: 4px solid var(--black);
-      box-shadow: 6px 6px 0 var(--magenta);
-      transform: rotate(-3deg);
-      z-index: 10;
     }
 
-    .logo-saben-esquina {
-      font-family: 'Bangers', cursive;
-      font-size: 4rem; /* Tamaño reducido para la esquina */
-      color: #fad14b;
-      margin: 0;
-      line-height: 1;
-      letter-spacing: 2px;
-      text-shadow:
-        -2px -2px 0 var(--black),
-         2px -2px 0 var(--black),
-        -2px  2px 0 var(--black),
-         2px  2px 0 var(--black),
-         5px  5px 0 var(--black), 
-         8px  8px 0 var(--magenta); 
-    }
-
-    .subtitulo-saben-esquina {
-      font-family: 'Comic Neue', cursive;
-      font-weight: bold;
-      font-size: 1.1rem;
-      color: #fad14b;
-      background-color: var(--black);
-      padding: 5px 15px;
-      margin-top: 5px;
-      border: 3px solid var(--white);
-      transform: rotate(1deg);
-      text-transform: uppercase;
-      box-shadow: 3px 3px 0 var(--black);
-    }
-
-    /* 2. LAYOUT DE LOS PANELES AJUSTADO */
-    .tv-layout {
+    .host-header {
       display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
       flex-wrap: wrap;
-      gap: 30px;
-      margin: 10px auto 40px auto; /* Reduje el margen superior */
-      max-width: 1200px;
-      justify-content: center;
-      align-items: stretch;
+      gap: 14px;
     }
-    
-    .panel-comic {
+
+    .host-main {
       flex: 1;
-      min-width: 350px;
-      background: var(--white);
-      border: 6px solid var(--black);
-      border-radius: 15px;
-      padding: 30px;
-      box-shadow: 12px 12px 0px var(--magenta);
-      position: relative;
+      display: grid;
+      gap: 24px;
     }
 
-    .panel-amarillo {
-      background-color: var(--yellow);
-      box-shadow: 12px 12px 0px var(--cyan);
+    /* ── LOBBY ── */
+    #view-lobby {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 800px) {
+      #view-lobby { grid-template-columns: 1fr; }
     }
 
-    .qr-container {
-      margin: 15px 0;
+    .qr-box {
+      text-align: center;
     }
-
-    .qr-container img {
-      width: 220px; /* Un poco más pequeño para que no quite tanto espacio */
-      border: 8px solid var(--black);
-      border-radius: 10px;
-      box-shadow: 6px 6px 0 var(--cyan);
+    .qr-box img {
+      width: 240px;
+      border: 8px solid var(--cyan);
+      border-radius: 12px;
+      box-shadow: 0 0 30px rgba(0,239,239,0.5), 8px 8px 0 var(--magenta);
       transition: transform 0.3s;
     }
+    .qr-box img:hover { transform: rotate(3deg) scale(1.04); }
 
-    .qr-container img:hover {
-      transform: scale(1.05) rotate(3deg);
+    .url-badge {
+      display: inline-block;
+      margin-top: 14px;
+      background: var(--yellow);
+      color: var(--black);
+      border: 4px solid var(--black);
+      border-radius: 8px;
+      padding: 8px 18px;
+      font-family: 'Bangers', cursive;
+      font-size: 1.5rem;
+      letter-spacing: 1px;
+      box-shadow: 4px 4px 0 var(--cyan);
     }
 
-    .pulse-text {
-      animation: pulse 1.5s infinite;
-      color: var(--magenta);
-      font-weight: bold;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-      100% { transform: scale(1); }
-    }
-
-    .lista-scroll {
+    .player-wall {
       display: flex;
       flex-wrap: wrap;
-      gap: 15px;
-      justify-content: center;
-      margin-top: 20px;
-      min-height: 200px;
+      gap: 12px;
       align-content: flex-start;
+      min-height: 220px;
     }
 
-    /* El Banner de Créditos de Dan */
-    .footer-credito {
-      margin-top: 20px;
+    /* ── PREGUNTA (host) ── */
+    #view-question {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .question-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .votos-counter {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 1rem;
+      color: var(--cyan);
+    }
+
+    /* ── REVEAL ── */
+    #view-reveal {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .reveal-opciones {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .reveal-jugadores {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .reveal-chip {
       font-family: 'Bangers', cursive;
-      font-size: 1.8rem;
-      background: var(--black);
-      color: var(--yellow);
-      display: inline-block;
-      padding: 10px 40px;
-      border: 4px solid var(--white);
-      box-shadow: 8px 8px 0 var(--magenta);
-      transform: rotate(-1deg);
+      font-size: 1.3rem;
+      padding: 6px 16px;
+      border-radius: 6px;
+      border: 3px solid var(--black);
+      animation: pop-in 0.3s both;
       letter-spacing: 1px;
     }
+    .reveal-chip.ok  { background: var(--green);   color: var(--black); }
+    .reveal-chip.mal { background: var(--red);     color: var(--white); }
 
-    .footer-credito a {
-      color: var(--cyan);
-      text-decoration: none;
-      text-shadow: 2px 2px 0 var(--magenta);
+    /* ── RANKING / END ── */
+    #view-ranking, #view-end {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
 
-    .footer-credito a:hover {
-      color: var(--white);
-      text-decoration: underline;
+    /* ── HOST KEY MODAL ── */
+    #host-key-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 500;
+    }
+    .modal-box {
+      background: var(--dark);
+      border: 4px solid var(--cyan);
+      border-radius: 14px;
+      padding: 36px;
+      max-width: 420px;
+      width: 90%;
+      box-shadow: 0 0 40px rgba(0,239,239,0.4), 8px 8px 0 var(--magenta);
+      text-align: center;
+    }
+    .modal-box h2 {
+      font-family: 'Bangers', cursive;
+      font-size: 2.2rem;
+      color: var(--yellow);
+      margin-bottom: 16px;
+    }
+
+    /* ── PROGRESS ── */
+    .progress-pills {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+    }
+    .pill {
+      width: 32px;
+      height: 10px;
+      border-radius: 5px;
+      background: rgba(255,255,255,0.15);
+      border: 2px solid rgba(255,255,255,0.2);
+      transition: background 0.3s;
+    }
+    .pill.done    { background: var(--green); border-color: var(--green); }
+    .pill.current { background: var(--yellow); border-color: var(--yellow); }
+
+    /* ── STAR ANIMATION END ── */
+    .winner-name {
+      font-family: 'Bangers', cursive;
+      font-size: clamp(3rem, 8vw, 6rem);
+      color: var(--yellow);
+      text-shadow: -3px -3px 0 var(--black), 3px -3px 0 var(--black),
+                   -3px 3px 0 var(--black), 3px 3px 0 var(--black),
+                   6px 6px 0 var(--magenta);
+      animation: glitch 3s infinite;
     }
   </style>
 </head>
 <body>
+
+<!-- ENTRY MODAL -->
+<div id="host-key-modal">
+  <div class="modal-box">
+    <h2 style="font-size: 2.8rem; margin-bottom: 24px;">🎮 ¿A QUÉ VIENES?</h2>
+    <div style="display:flex; flex-direction:column; gap:16px;">
+      <button class="btn-comic" style="background:var(--cyan); font-size:1.8rem;" onclick="window.location.href='player.html'">
+        📱 SOY JUGADOR (Celu)
+      </button>
+      <button class="btn-comic" style="background:var(--magenta); color:var(--white); font-size:1.8rem;" onclick="ingresarComoHost(false)">
+        📺 NUEVA PARTIDA (TV)
+      </button>
+      <button class="btn-comic hidden" id="btn-retomar" style="background:var(--yellow); color:var(--black); font-size:1.8rem;" onclick="ingresarComoHost(true)">
+        🔄 RETOMAR SALA (PIN: <span id="saved-pin"></span>)
+      </button>
+    </div>
+  </div>
+</div>
+
+<canvas id="confetti-canvas"></canvas>
+
+<div id="app" style="display:none;">
+
+  <!-- HEADER -->
+  <div class="host-header">
+    <h1 class="logo glitch">¡SABEN!</h1>
+    <div id="header-info" style="display:flex; gap:14px; align-items:center; flex-wrap:wrap;">
+      <span class="num-pregunta" id="estado-label">LOBBY</span>
+      <button class="btn-comic" style="width:auto; padding:8px 20px; font-size:1.2rem;" onclick="resetearSala()">↩ REINICIAR</button>
+    </div>
+  </div>
+
+  <!-- MAIN HOST -->
+  <div class="host-main">
+
+    <!-- ── LOBBY ── -->
+    <div id="view-lobby">
+      <div class="panel qr-box">
+        <h3 style="font-family:'Bangers',cursive; font-size:1.8rem; margin-bottom:14px; color:var(--cyan);">📱 ESCANEA PARA JUGAR</h3>
+        <img id="qr-img" src="" alt="QR para unirse">
+        <div class="url-badge" id="host-pin-display">PIN: ????</div>
+        <p style="margin-top:14px; font-size:1rem; color:rgba(255,255,255,0.6);">entra a saben.cl e ingresa el PIN</p>
+      </div>
+
+      <div class="panel panel-yellow">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
+          <h3 style="font-family:'Bangers',cursive; font-size:2rem; margin:0;">
+            🎮 SALA DE ESPERA
+            <span style="font-size:1.2rem; color:var(--black); background:var(--black); color:var(--yellow); padding:2px 12px; border-radius:20px; margin-left:10px;" id="contador">0</span>
+          </h3>
+          <span class="num-pregunta pulse" style="color:var(--black);">ESPERANDO JUGADORES…</span>
+        </div>
+        <hr class="comic-hr">
+        <div id="lista-jugadores" class="player-wall">
+          <p style="color:rgba(0,0,0,0.5); font-size:1.1rem; width:100%;">El primero en entrar aparece aquí… 👀</p>
+        </div>
+        <div style="margin-top:24px;">
+          <button class="btn-comic btn-start" id="btn-empezar" onclick="iniciarJuego()" disabled>
+            ⚡ ¡ZAP! EMPEZAR SHOW
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PREGUNTA ACTIVA ── -->
+    <div id="view-question" class="hidden">
+      <div class="question-header">
+        <div>
+          <div class="num-pregunta" id="q-num">PREGUNTA 1 / 10</div>
+          <div class="author-label" id="q-author" style="color:var(--magenta); font-family:'Bangers',cursive; font-size:1.2rem; margin-top:4px;"></div>
+        </div>
+        <div style="text-align:center;">
+          <div class="timer-number" id="host-timer">15</div>
+        </div>
+        <div class="votos-counter">
+          <span id="votos-count">0</span>/<span id="votos-total">0</span> votaron
+        </div>
+      </div>
+
+      <div class="timer-bar-container">
+        <div class="timer-bar" id="host-timer-bar" style="width:100%"></div>
+      </div>
+
+      <div class="progress-pills" id="progress-pills"></div>
+
+      <div class="pregunta-texto" id="q-text">¿…?</div>
+
+      <div class="grid-respuestas" id="q-opciones"></div>
+
+      <div style="display:flex; gap:12px; margin-top:10px; flex-wrap:wrap;">
+        <button class="btn-comic" style="background:var(--magenta); color:var(--white); flex:1; min-width:180px;" onclick="revelarRespuesta()">
+          👁️ REVELAR RESPUESTA
+        </button>
+      </div>
+    </div>
+
+    <!-- ── REVEAL ── -->
+    <div id="view-reveal" class="hidden">
+      <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+        <div class="num-pregunta">RESULTADO</div>
+        <div class="pregunta-texto" id="rev-text" style="flex:1; font-size:1.3rem; padding:12px 16px;"></div>
+      </div>
+
+      <div class="reveal-opciones" id="rev-opciones"></div>
+
+      <div class="panel" style="text-align:center;">
+        <h3 style="font-family:'Bangers',cursive; font-size:1.6rem; margin-bottom:14px;">¿Quién acertó?</h3>
+        <div class="reveal-jugadores" id="rev-jugadores"></div>
+      </div>
+
+      <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <button class="btn-comic" style="flex:1; min-width:180px;" onclick="siguientePregunta()">
+          ➡️ SIGUIENTE PREGUNTA
+        </button>
+        <button class="btn-comic" style="flex:0; min-width:160px; background:var(--cyan);" onclick="mostrarRanking()">
+          🏆 VER RANKING
+        </button>
+      </div>
+    </div>
+
+    <!-- ── RANKING INTERMEDIO ── -->
+    <div id="view-ranking" class="hidden">
+      <div style="text-align:center; margin-bottom:8px;">
+        <h2 style="font-family:'Bangers',cursive; font-size:2.8rem; color:var(--yellow);">🏆 RANKING PARCIAL</h2>
+      </div>
+      <div id="ranking-lista"></div>
+      <button class="btn-comic btn-start" onclick="continuarJuego()" id="btn-continuar">
+        ▶ CONTINUAR JUEGO
+      </button>
+    </div>
+
+    <!-- ── FIN DEL JUEGO ── -->
+    <div id="view-end" class="hidden">
+      <div style="text-align:center;">
+        <div class="num-pregunta" style="margin-bottom:10px;">¡JUEGO TERMINADO!</div>
+        <div class="winner-name" id="winner-name">???</div>
+        <p style="font-family:'Bangers',cursive; font-size:1.6rem; margin:6px 0 24px; color:var(--cyan);">¡ES EL/LA GANADOR/A! 🎊</p>
+      </div>
+      <div class="podio" id="podio"></div>
+      <hr class="comic-hr">
+      <div id="end-ranking-lista"></div>
+      <button class="btn-comic" style="background:var(--magenta); color:var(--white); margin-top:24px;" onclick="resetearSala()">
+        🔁 JUGAR DE NUEVO
+      </button>
+    </div>
+
+  </div><!-- /host-main -->
+</div><!-- /app -->
+
+<script>
+let ROOM_ID = '';
+let HOST_KEY = '';
+let lastState = '';
+let lastPlayerCount = -1;
+let timerInterval = null;
+let pollInterval = null;
+let timerValue = 0;
+let timerMax = 15;
+let knownPlayers = new Set();
+
+const ICONS  = ['bg-cyan','bg-magenta','bg-yellow','bg-green'];
+const ICONS_BTN = ['🔷','❤️','⚡','🌿'];
+const COLORS = ['#00EFEF','#FF00AA','#FFD700','#39FF14'];
+
+// ── INICIALIZAR LOBBY ─────────────────────────────────────────────
+window.onload = () => {
+  const savedRoom = localStorage.getItem('SABEN_ROOM_ID');
+  if (savedRoom) {
+    document.getElementById('btn-retomar').classList.remove('hidden');
+    document.getElementById('saved-pin').textContent = savedRoom;
+  }
+};
+
+// ── MODAL INGRESO ─────────────────────────────────────────────────
+function ingresarComoHost(retomar) {
+  HOST_KEY = 'SABEN2025'; // <-- Crucial: evita el error "Clave incorrecta"
   
-  <div class="header-container">
-    <div class="banner-saben-esquina">
-      <h1 class="logo-saben-esquina">¡SABEN.cl!</h1>
-      <div class="subtitulo-saben-esquina">EL JUEGO DE NUESTRA FAMILIA</div>
-    </div>
-  </div>
+  if (retomar) {
+    ROOM_ID = localStorage.getItem('SABEN_ROOM_ID');
+  } else {
+    // Generar PIN nuevo de 4 dígitos
+    ROOM_ID = Math.floor(1000 + Math.random() * 9000).toString();
+    localStorage.setItem('SABEN_ROOM_ID', ROOM_ID);
+  }
+  
+  // Mostrar PIN en el panel
+  document.getElementById('host-pin-display').textContent = 'PIN: ' + ROOM_ID;
+  
+  // Actualizar imagen del QR
+  const qrUrl = `${window.location.origin}/player.html?pin=${ROOM_ID}`;
+  document.getElementById('qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&color=00EFEF&bgcolor=111827&data=${encodeURIComponent(qrUrl)}`;
 
-  <div class="tv-layout">
-    
-    <div class="panel-comic">
-      <h3 style="font-size: 2.5rem; margin-top: 0; text-transform: uppercase;">1. Escanea para jugar</h3>
-      <p style="font-size: 1.5rem;">Apunta tu cámara aquí 👇</p>
-      
-      <div class="qr-container">
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://saben.cl/player.html" alt="QR Code">
-      </div>
-      
-      <p style="font-size: 1.3rem; line-height: 1.6; margin-top: 20px;">o entra desde el navegador a:<br>
-        <strong style="display: inline-block; margin-top: 10px; font-size: 1.8rem; background: var(--yellow); padding: 8px 15px; border: 3px solid var(--black); box-shadow: 4px 4px 0 var(--cyan);">https://saben.cl/player.html</strong>
-      </p>
-    </div>
+  document.getElementById('host-key-modal').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  startPolling();
+}
 
-    <div class="panel-comic panel-amarillo">
-      <h3 style="font-size: 2.5rem; margin-top: 0; text-transform: uppercase;">2. Camerino VIP</h3>
-      <p class="pulse-text" style="font-size: 1.8rem;">Jugadores Listos: <span id="contador" style="background: var(--black); color: var(--white); padding: 2px 10px; border-radius: 5px;">0</span></p>
-      
-      <hr style="border: 3px solid var(--black); margin: 20px 0;">
-      
-      <div id="lista-jugadores" class="lista-scroll">
-        <p style="font-size: 1.2rem; color: #555; width: 100%;">Esperando que entre el primer sabiondo...</p>
-      </div>
+// ── POLLING ──────────────────────────────────────────────────────
+function startPolling() {
+  fetchRoom();
+  pollInterval = setInterval(fetchRoom, 2500);
+}
 
-      <button class="btn-comic" style="margin-top: auto; position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%); width: 80%;" onclick="alert('¡Pronto programaremos la lógica para lanzar la Ronda 1!')">¡ZAP! Empezar Show</button>
-    </div>
+async function fetchRoom() {
+  try {
+    const res = await fetch(`/api/room?id=${ROOM_ID}`);
+    if (!res.ok) return;
+    const data = await res.json();
+    renderState(data);
+  } catch(e) { /* sin red */ }
+}
 
-  </div>
+function renderState(data) {
+  const state = data.state;
 
-  <div class="footer-credito">
-    ⚡ Creado por <a href="https://dan.tagle.cl" target="_blank">dan.tagle.cl</a> 100% GRATIS para el mundo 🌎
-  </div>
+  // Actualizar label de estado
+  const labels = { lobby:'LOBBY', question:'EN JUEGO', reveal:'RESULTADO', ranking:'RANKING', end:'FIN' };
+  document.getElementById('estado-label').textContent = labels[state] || state.toUpperCase();
 
-  <script>
-    // Polling: Leemos la API cada 3 segundos para actualizar la pantalla
-    setInterval(async () => {
-      try {
-        const res = await fetch('/api/room');
-        const data = await res.json();
-        
-        const contenedor = document.getElementById('lista-jugadores');
-        const contador = document.getElementById('contador');
-        
-        if (parseInt(contador.innerText) !== data.players.length) {
-            contador.innerText = data.players.length;
-            contenedor.innerHTML = ''; 
-            
-            if (data.players.length === 0) {
-                contenedor.innerHTML = '<p style="font-size: 1.2rem; color: #555; width: 100%;">Esperando que entre el primer sabiondo...</p>';
-            } else {
-                data.players.forEach(jugador => {
-                    const div = document.createElement('div');
-                    div.className = 'player-tag';
-                    const rotacion = Math.floor(Math.random() * 10) - 5; 
-                    div.style.transform = `rotate(${rotacion}deg)`;
-                    div.innerText = jugador.name;
-                    contenedor.appendChild(div);
-                });
-            }
+  if (state === 'lobby') {
+    renderLobby(data);
+  } else if (state === 'question') {
+    if (lastState !== 'question') showView('question');
+    renderQuestion(data);
+  } else if (state === 'reveal') {
+    if (lastState !== 'reveal') {
+      clearTimer();
+      showView('reveal');
+      renderReveal(data);
+    } else {
+      // Actualizar aciertos en tiempo real
+      renderRevealChips(data.reveals || []);
+    }
+  } else if (state === 'ranking') {
+    if (lastState !== 'ranking') {
+      showView('ranking');
+      renderRanking(data.scores || data.players);
+    }
+  } else if (state === 'end') {
+    if (lastState !== 'end') {
+      clearTimer();
+      showView('end');
+      renderEnd(data.scores || data.players);
+      launchConfetti();
+    }
+  }
+
+  lastState = state;
+}
+
+// ── LOBBY ─────────────────────────────────────────────────────────
+function renderLobby(data) {
+  showView('lobby');
+  const players = data.players || [];
+  document.getElementById('contador').textContent = players.length;
+
+  if (players.length !== lastPlayerCount) {
+    lastPlayerCount = players.length;
+    const wall = document.getElementById('lista-jugadores');
+    wall.innerHTML = '';
+
+    if (players.length === 0) {
+      wall.innerHTML = '<p style="color:rgba(0,0,0,0.5); font-size:1.1rem; width:100%;">El primero en entrar aparece aquí… 👀</p>';
+    } else {
+      players.forEach((p, i) => {
+        if (!knownPlayers.has(p.name)) {
+          knownPlayers.add(p.name);
         }
-      } catch (e) {
-        console.error('Buscando señal del show...', e);
-      }
-    }, 3000);
-  </script>
+        const tag = document.createElement('div');
+        tag.className = 'player-tag';
+        const rot = (Math.random() * 10) - 5;
+        tag.style.setProperty('--rot', `${rot}deg`);
+        tag.style.transform = `rotate(${rot}deg)`;
+        tag.style.background = COLORS[i % COLORS.length];
+        tag.style.color = i % COLORS.length === 1 ? '#fff' : '#000';
+        tag.textContent = '⭐ ' + p.name;
+        wall.appendChild(tag);
+      });
+    }
+  }
+
+  const btn = document.getElementById('btn-empezar');
+  btn.disabled = players.length < 1;
+}
+
+// ── INICIAR JUEGO ─────────────────────────────────────────────────
+async function iniciarJuego() {
+  const btn = document.getElementById('btn-empezar');
+  btn.textContent = '⏳ GENERANDO PREGUNTAS…';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('/api/start', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ roomId: ROOM_ID, hostKey: HOST_KEY }),
+    });
+    const data = await res.json();
+    if (!data.success) {
+      btn.textContent = 'ERROR: ' + (data.error || '?');
+      btn.disabled = false;
+    }
+    // El polling se encargará del resto
+  } catch(e) {
+    btn.textContent = '⚡ ¡ZAP! EMPEZAR SHOW';
+    btn.disabled = false;
+  }
+}
+
+// ── PREGUNTA ──────────────────────────────────────────────────────
+let currentQ = null;
+
+function renderQuestion(data) {
+  const q = data.question;
+  if (!q) return;
+
+  // Si es una pregunta nueva, renderizar todo
+  if (!currentQ || currentQ.text !== q.text) {
+    currentQ = q;
+
+    document.getElementById('q-num').textContent =
+      `PREGUNTA ${(data.currentQ || 0) + 1} / ${data.totalQ || '?'}`;
+
+    const auth = q.author ? `Basada en ${q.author}` : (q.category || '');
+    document.getElementById('q-author').textContent = auth;
+    document.getElementById('q-text').textContent = q.text;
+
+    // Opciones
+    const cont = document.getElementById('q-opciones');
+    cont.innerHTML = '';
+    q.options.forEach((opt, i) => {
+      const div = document.createElement('div');
+      div.className = 'opcion-host ' + ICONS[i];
+      div.style.animationDelay = `${i * 0.08}s`;
+      div.innerHTML = `<span class="icono-opcion">${opt.icon || ICONS_BTN[i]}</span>
+                       <span>${opt.letter}. ${opt.text}</span>`;
+      cont.appendChild(div);
+    });
+
+    // Pílulas de progreso
+    renderPills(data.currentQ, data.totalQ);
+
+    // Timer
+    startTimer(q.timeLimit || 15, q.startedAt || Date.now());
+  }
+
+  // Votos (siempre actualizar)
+  const answered = (data.players || []).filter((_, i) => {
+    // No tenemos dato individual desde host, contar desde reveals en reveal state
+    return false;
+  }).length;
+  document.getElementById('votos-total').textContent = (data.players || []).length;
+}
+
+function renderPills(current, total) {
+  const cont = document.getElementById('progress-pills');
+  cont.innerHTML = '';
+  for (let i = 0; i < total; i++) {
+    const p = document.createElement('div');
+    p.className = 'pill' + (i < current ? ' done' : i === current ? ' current' : '');
+    cont.appendChild(p);
+  }
+}
+
+function startTimer(seconds, startedAt) {
+  clearTimer();
+  timerMax = seconds;
+  const bar = document.getElementById('host-timer-bar');
+  const num = document.getElementById('host-timer');
+
+  function tick() {
+    const elapsed = (Date.now() - startedAt) / 1000;
+    const remaining = Math.max(0, seconds - elapsed);
+    const pct = (remaining / seconds) * 100;
+
+    timerValue = Math.ceil(remaining);
+    num.textContent = timerValue;
+    num.classList.toggle('urgente', timerValue <= 5);
+    bar.style.width = pct + '%';
+
+    if (remaining <= 0) {
+      clearTimer();
+      // Auto-revelar si se acabó el tiempo
+      revelarRespuesta();
+    }
+  }
+  tick();
+  timerInterval = setInterval(tick, 500);
+}
+
+function clearTimer() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+}
+
+// ── REVEAL ────────────────────────────────────────────────────────
+function renderReveal(data) {
+  const q = data.question;
+  if (!q) return;
+
+  document.getElementById('rev-text').textContent = q.text;
+
+  const cont = document.getElementById('rev-opciones');
+  cont.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const div = document.createElement('div');
+    const isCorrect = opt.letter === q.correctLetter;
+    div.className = 'opcion-host ' + ICONS[i] + (isCorrect ? ' correcta' : ' incorrecta');
+    div.innerHTML = `<span class="icono-opcion">${opt.icon || ICONS_BTN[i]}</span>
+                     <span>${opt.letter}. ${opt.text}</span>
+                     ${isCorrect ? '<span style="margin-left:auto; font-size:1.8rem;">✅</span>' : ''}`;
+    cont.appendChild(div);
+  });
+
+  renderRevealChips(data.reveals || []);
+}
+
+function renderRevealChips(reveals) {
+  const cont = document.getElementById('rev-jugadores');
+  cont.innerHTML = '';
+  if (!reveals.length) {
+    cont.innerHTML = '<p style="color:rgba(255,255,255,0.4);">Nadie respondió a tiempo…</p>';
+    return;
+  }
+  const sorted = [...reveals].sort((a,b) => (b.pts||0) - (a.pts||0));
+  sorted.forEach(r => {
+    const chip = document.createElement('div');
+    chip.className = 'reveal-chip ' + (r.correct ? 'ok' : 'mal');
+    chip.textContent = (r.correct ? '✅ ' : '❌ ') + r.name + (r.correct ? ` +${r.pts}` : '');
+    cont.appendChild(chip);
+  });
+}
+
+// ── RANKING ───────────────────────────────────────────────────────
+function renderRanking(scores) {
+  if (!scores) return;
+  const cont = document.getElementById('ranking-lista');
+  cont.innerHTML = '';
+  scores.forEach((p, i) => {
+    const item = document.createElement('div');
+    item.className = 'resultado-item' + (i===0?' top1':i===1?' top2':i===2?' top3':'');
+    item.style.animationDelay = `${i * 0.07}s`;
+    const medals = ['🥇','🥈','🥉'];
+    item.innerHTML = `
+      <div class="rank-badge">${medals[i] || (i+1)}</div>
+      <div style="flex:1; font-size:1.5rem;">${p.name}</div>
+      <div style="font-family:'Press Start 2P',monospace; font-size:0.9rem; color:var(--yellow);">${p.score} pts</div>
+    `;
+    cont.appendChild(item);
+  });
+}
+
+// ── FIN ───────────────────────────────────────────────────────────
+function renderEnd(scores) {
+  if (!scores || !scores.length) return;
+  const winner = scores[0];
+  document.getElementById('winner-name').textContent = '🏆 ' + winner.name + ' 🏆';
+
+  // Podio
+  const podio = document.getElementById('podio');
+  podio.innerHTML = '';
+  const order = [scores[1], scores[0], scores[2]]; // 2do, 1ro, 3ro
+  const classes = ['podio-2','podio-1','podio-3'];
+  const labels = ['🥈','🥇','🥉'];
+  order.forEach((p, i) => {
+    if (!p) return;
+    const col = document.createElement('div');
+    col.className = 'podio-col';
+    col.style.animationDelay = `${i * 0.15}s`;
+    col.innerHTML = `
+      <div class="podio-nombre">${p.name}</div>
+      <div class="podio-bloque ${classes[i]}">${labels[i]}<br>${p.score}</div>
+    `;
+    podio.appendChild(col);
+  });
+
+  // Lista completa
+  renderRankingEnd(scores);
+}
+
+function renderRankingEnd(scores) {
+  const cont = document.getElementById('end-ranking-lista');
+  cont.innerHTML = '';
+  scores.forEach((p, i) => {
+    const item = document.createElement('div');
+    item.className = 'resultado-item' + (i===0?' top1':i===1?' top2':i===2?' top3':'');
+    const medals = ['🥇','🥈','🥉'];
+    item.innerHTML = `
+      <div class="rank-badge">${medals[i] || (i+1)}</div>
+      <div style="flex:1; font-size:1.5rem;">${p.name}</div>
+      <div style="font-family:'Press Start 2P',monospace; font-size:0.9rem; color:var(--yellow);">${p.score} pts</div>
+    `;
+    cont.appendChild(item);
+  });
+}
+
+// ── CONTROLES ANFITRIÓN ───────────────────────────────────────────
+async function revelarRespuesta() {
+  await hostAction('reveal');
+}
+async function siguientePregunta() {
+  await hostAction('next');
+}
+async function mostrarRanking() {
+  await hostAction('ranking');
+}
+async function continuarJuego() {
+  await hostAction('next');
+}
+
+async function hostAction(action) {
+  try {
+    await fetch('/api/next', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ roomId: ROOM_ID, hostKey: HOST_KEY, action }),
+    });
+    // El polling actualizará la vista
+    await fetchRoom();
+  } catch(e) {}
+}
+
+async function resetearSala() {
+  if (!confirm('¿Reiniciar completamente el juego?')) return;
+  clearTimer();
+  knownPlayers.clear();
+  lastPlayerCount = -1;
+  currentQ = null;
+  lastState = '';
+  await hostAction('reset');
+}
+
+// ── SHOW/HIDE VIEWS ───────────────────────────────────────────────
+function showView(name) {
+  ['lobby','question','reveal','ranking','end'].forEach(v => {
+    const el = document.getElementById('view-' + v);
+    if (el) el.classList.toggle('hidden', v !== name);
+  });
+}
+
+// ── CONFETTI ──────────────────────────────────────────────────────
+function launchConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const pieces = Array.from({length: 200}, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * -canvas.height,
+    r: Math.random() * 8 + 4,
+    color: ['#FFD700','#00EFEF','#FF00AA','#39FF14','#8B00FF'][Math.floor(Math.random()*5)],
+    vx: (Math.random() - 0.5) * 4,
+    vy: Math.random() * 4 + 2,
+    spin: (Math.random() - 0.5) * 0.2,
+    angle: Math.random() * Math.PI * 2,
+  }));
+
+  let frame;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pieces.forEach(p => {
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.angle);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.r/2, -p.r/2, p.r, p.r * 0.5);
+      ctx.restore();
+      p.x += p.vx;
+      p.y += p.vy;
+      p.angle += p.spin;
+      if (p.y > canvas.height) { p.y = -10; p.x = Math.random() * canvas.width; }
+    });
+    frame = requestAnimationFrame(draw);
+  }
+  draw();
+  setTimeout(() => { cancelAnimationFrame(frame); ctx.clearRect(0,0,canvas.width,canvas.height); }, 8000);
+}
+</script>
 </body>
 </html>
-
-

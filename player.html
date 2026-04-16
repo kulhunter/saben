@@ -3,76 +3,717 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>¡SABEN! - Jugar</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#111827">
+  <title>¡SABEN! — Jugar</title>
+  <meta name="description" content="Únete al juego de trivia personalizado en saben.cl. Sin descargas, sólo tu teléfono.">
   <link rel="stylesheet" href="styles.css">
   <style>
-    /* Ocultamos el tablero de juego al inicio */
-    #zona-juego { display: none; }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px 16px 30px;
+      overflow-x: hidden;
+    }
+
+    /* ── LAYOUT DE VISTAS ── */
+    .view { width: 100%; max-width: 480px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+    .view.hidden { display: none !important; }
+
+    /* ── CUESTIONARIO ── */
+    #view-questionnaire {
+      width: 100%;
+      max-width: 480px;
+    }
+    .q-card {
+      background: rgba(255,255,255,0.05);
+      border: 3px solid rgba(0,239,239,0.4);
+      border-radius: 12px;
+      padding: 20px;
+      width: 100%;
+    }
+    .q-step {
+      display: none;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .q-step.active { display: flex; }
+
+    .q-label {
+      font-family: 'Bangers', cursive;
+      font-size: 1.4rem;
+      letter-spacing: 1px;
+      color: var(--yellow);
+      margin-bottom: 4px;
+    }
+    .q-hint {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 6px;
+    }
+    textarea.cuestionario-input {
+      height: 80px;
+      font-size: 1rem;
+    }
+    .q-nav {
+      display: flex;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .btn-q {
+      font-family: 'Bangers', cursive;
+      font-size: 1.5rem;
+      letter-spacing: 1px;
+      padding: 10px 22px;
+      border: 3px solid var(--black);
+      border-radius: 8px;
+      cursor: pointer;
+      background: var(--cyan);
+      color: var(--black);
+      box-shadow: 4px 4px 0 var(--black);
+      transition: all 0.08s;
+      flex: 1;
+    }
+    .btn-q:active { transform: translate(4px,4px); box-shadow:0 0 0; }
+    .btn-q.back { background: rgba(255,255,255,0.1); color: var(--white); border-color: rgba(255,255,255,0.3); box-shadow:none; flex:0; }
+    .btn-q.skip { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.5); border-style: dashed; box-shadow: none; font-size:1.1rem; flex:0; }
+
+    /* ── ZONA DE JUEGO ── */
+    #view-game {
+      width: 100%;
+      max-width: 480px;
+    }
+    .game-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+    }
+
+    #player-nick {
+      font-family: 'Bangers', cursive;
+      font-size: 1.3rem;
+      color: var(--cyan);
+      letter-spacing: 2px;
+      opacity: 0.8;
+    }
+
+    .status-box {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      text-align: center;
+      border: 4px solid;
+    }
+
+    .waiting-anim {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 8px;
+    }
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--yellow);
+      animation: bounce 1.2s infinite;
+    }
+    .dot:nth-child(2) { animation-delay: 0.2s; background: var(--cyan); }
+    .dot:nth-child(3) { animation-delay: 0.4s; background: var(--magenta); }
+    @keyframes bounce {
+      0%,80%,100% { transform: translateY(0); }
+      40%          { transform: translateY(-12px); }
+    }
+
+    /* ── BOTONES GRANDES DE COLORES ── */
+    .grid-opciones {
+      width: 100%;
+    }
+    .card-opcion {
+      min-height: 130px;
+      border-radius: 16px;
+    }
+    .card-opcion .icono-btn { font-size: 3rem; }
+    .card-opcion .letra-btn { font-size: 1.1rem; opacity: 0.8; }
+
+    /* ── FEEDBACK DE RESPUESTA ── */
+    .pts-flash {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 2rem;
+      animation: pts-pop 1s both;
+    }
+    @keyframes pts-pop {
+      0%   { transform: scale(0.5) rotate(-10deg); opacity: 0; }
+      60%  { transform: scale(1.3) rotate(3deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0); opacity: 1; }
+    }
+
+    /* ── TIMER MINI (jugador) ── */
+    .mini-timer {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 1.6rem;
+      color: var(--yellow);
+      text-shadow: 0 0 10px var(--yellow), 2px 2px 0 var(--black);
+      letter-spacing: 2px;
+    }
+    .mini-timer.urgente { color: var(--red); text-shadow: 0 0 10px var(--red), 2px 2px 0 var(--black); }
+
+    /* ── SCORE DISPLAY ── */
+    .score-display {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 1.2rem;
+      color: var(--yellow);
+      background: rgba(0,0,0,0.4);
+      border: 2px solid rgba(255,215,0,0.3);
+      border-radius: 8px;
+      padding: 8px 18px;
+      letter-spacing: 1px;
+    }
+
+    /* ── PODIO FINAL ── */
+    .final-rank-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.05);
+      border: 3px solid rgba(255,255,255,0.1);
+      width: 100%;
+      font-family: 'Bangers', cursive;
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+    }
+    .final-rank-item.me {
+      border-color: var(--yellow);
+      background: rgba(255,215,0,0.12);
+      box-shadow: 0 0 15px rgba(255,215,0,0.3);
+    }
   </style>
 </head>
-<body style="background-image: none; background-color: var(--yellow);">
-  
-  <h1 class="logo" style="font-size: 4rem; margin-top: 20px;">¡SABEN!</h1>
+<body>
 
-  <div class="comic-box" id="zona-ingreso" style="margin-top: 10px;">
-    <h2 style="margin-top: 0;">Entra al Show</h2>
-    <input type="text" id="nombre-jugador" placeholder="Tu Apodo..." autocomplete="off">
-    <button class="btn-comic" onclick="unirseAlShow()" id="btn-unirse">¡VOY!</button>
-    <p id="mensaje-error" style="color: red; font-weight: bold; display: none;"></p>
+<!-- ══════════════════════════════════════════════ -->
+<!-- VISTA 1: INGRESO (nombre)                     -->
+<!-- ══════════════════════════════════════════════ -->
+<div id="view-login" class="view">
+  <h1 class="logo glitch" style="margin-top: 10px;">¡SABEN!</h1>
+  <p style="font-family:'Bangers',cursive; font-size:1.4rem; letter-spacing:2px; color:var(--cyan);">EL JUEGO DE NUESTRA FAMILIA</p>
+
+  <div class="q-card" style="margin-top:8px;">
+    <div class="q-label" style="text-align:center; font-size:1.8rem; margin-bottom:12px;">ÚNETE AL SHOW</div>
+    <input type="text" id="pin-sala" placeholder="PIN de la Sala (ej: 1234)" autocomplete="off" maxlength="4" style="text-transform:uppercase;">
+    <input type="text" id="nombre-jugador" placeholder="Tu apodo..." autocomplete="off" maxlength="20">
+    <button class="btn-comic" id="btn-nombre" onclick="confirmarNombre()">→ ¡ENTRAR!</button>
+    <p id="error-nombre" style="color:var(--red); font-weight:bold; min-height:20px; margin-top:8px;"></p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- VISTA 2: CUESTIONARIO PERSONAL                -->
+<!-- ══════════════════════════════════════════════ -->
+<div id="view-questionnaire" class="view hidden">
+  <h1 class="logo" style="font-size:3rem; margin-top:10px;">¡SABEN!</h1>
+  <p style="font-family:'Bangers',cursive; font-size:1.4rem; color:var(--magenta); letter-spacing:2px;">
+    CUÉNTANOS SOBRE TI, <span id="q-nombre"></span>
+  </p>
+  <p style="font-size:0.9rem; color:rgba(255,255,255,0.5); text-align:center; max-width:380px;">
+    Tus respuestas crearán las preguntas del juego 🎲 ¡Más sincero, más divertido!
+  </p>
+
+  <div class="progress-bar-q" id="q-progress" style="width:0%; height:8px; background:var(--cyan); border-radius:4px; transition: width 0.4s; width:100%;"></div>
+
+  <div class="q-card" style="margin-top:4px;" id="q-container">
+    <!-- Las preguntas se inyectan dinámicamente con Javascript -->
   </div>
 
-  <div id="zona-juego" style="padding: 10px;">
-    <h2 style="background: var(--white); border: 4px solid var(--black); padding: 10px; box-shadow: 4px 4px 0 var(--black);">¡ATENTO A LA PANTALLA!</h2>
-    <div class="grid-opciones">
-      <div class="card-opcion bg-cyan" onclick="enviarVoto('A')">A</div>
-      <div class="card-opcion bg-magenta" onclick="enviarVoto('B')">B</div>
-      <div class="card-opcion bg-yellow" onclick="enviarVoto('C')">C</div>
-      <div class="card-opcion bg-green" onclick="enviarVoto('D')">D</div>
+  <!-- Indicador de paso -->
+  <div style="font-family:'Press Start 2P',monospace; font-size:0.7rem; color:rgba(255,255,255,0.4);">
+    PREGUNTA <span id="q-step-num">1</span> DE 10
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- VISTA 3: SALA DE ESPERA (lobby)               -->
+<!-- ══════════════════════════════════════════════ -->
+<div id="view-lobby" class="view hidden">
+  <h1 class="logo" style="font-size:3.5rem; margin-top:20px;">¡SABEN!</h1>
+  <div id="player-nick"></div>
+
+  <div class="status-box" style="border-color:var(--cyan); text-align:center; width:100%; max-width:380px; margin-top:10px;">
+    <div style="font-family:'Bangers',cursive; font-size:2rem; color:var(--cyan); letter-spacing:2px;">¡ESTÁS DENTRO!</div>
+    <div style="font-size:1rem; color:rgba(255,255,255,0.6); margin-top:6px;">Esperando que el anfitrión empiece el juego…</div>
+    <div class="waiting-anim">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
     </div>
   </div>
 
-  <script>
-    async function unirseAlShow() {
-      const nombre = document.getElementById('nombre-jugador').value.trim();
-      const errorMsg = document.getElementById('mensaje-error');
-      
-      if (!nombre) {
-        errorMsg.innerText = "¡Escribe un apodo primero!";
-        errorMsg.style.display = "block";
+  <div style="text-align:center; margin-top:16px;">
+    <p style="font-size:0.9rem; color:rgba(255,255,255,0.4);">Mira la pantalla grande 👀</p>
+  </div>
+
+  <div class="score-display" id="lobby-score" style="margin-top:8px;">0 pts</div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- VISTA 4: BOTONES DE RESPUESTA                 -->
+<!-- ══════════════════════════════════════════════ -->
+<div id="view-game" class="view hidden">
+  <div class="game-inner">
+    <div id="player-nick-game" style="font-family:'Bangers',cursive; font-size:1.2rem; color:var(--cyan); letter-spacing:2px;"></div>
+
+    <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap; justify-content:center;">
+      <div class="mini-timer" id="player-timer">15</div>
+      <div class="timer-bar-container" style="flex:1; min-width:180px;">
+        <div class="timer-bar" id="player-timer-bar" style="width:100%;"></div>
+      </div>
+    </div>
+
+    <div style="font-family:'Bangers',cursive; font-size:1.3rem; color:rgba(255,255,255,0.6); letter-spacing:3px; text-align:center;" id="atencion-txt">
+      👀 MIR A LA PANTALLA GRANDE
+    </div>
+
+    <div class="grid-opciones" id="player-opciones">
+      <div class="card-opcion bg-cyan"    id="btn-A" onclick="votar('A')"><span class="icono-btn">🔷</span><span class="letra-btn">A</span></div>
+      <div class="card-opcion bg-magenta" id="btn-B" onclick="votar('B')"><span class="icono-btn">❤️</span><span class="letra-btn">B</span></div>
+      <div class="card-opcion bg-yellow"  id="btn-C" onclick="votar('C')"><span class="icono-btn">⚡</span><span class="letra-btn">C</span></div>
+      <div class="card-opcion bg-green"   id="btn-D" onclick="votar('D')"><span class="icono-btn">🌿</span><span class="letra-btn">D</span></div>
+    </div>
+
+    <div class="score-display" id="game-score">0 pts</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- VISTA 5: FEEDBACK POST-VOTO                   -->
+<!-- ══════════════════════════════════════════════ -->
+<div id="view-feedback" class="view hidden">
+  <div class="status-box" id="feedback-box" style="width:100%; max-width:380px; text-align:center; margin-top:30px;">
+    <div id="feedback-icon" style="font-size:4rem; margin-bottom:10px;"></div>
+    <div id="feedback-msg" style="font-family:'Bangers',cursive; font-size:2.5rem; letter-spacing:2px;"></div>
+    <div id="feedback-pts" class="pts-flash" style="margin-top:10px; color:var(--yellow);"></div>
+    <div style="margin-top:16px; font-size:0.9rem; color:rgba(255,255,255,0.5);">Esperando resultado…</div>
+    <div class="waiting-anim">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+  <div class="score-display" id="feedback-score" style="margin-top:16px;">0 pts</div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- VISTA 6: RANKING FINAL                        -->
+<!-- ══════════════════════════════════════════════ -->
+<div id="view-end" class="view hidden">
+  <h1 class="logo" style="font-size:3rem; margin-top:10px;">¡SABEN!</h1>
+  <div style="font-family:'Bangers',cursive; font-size:2rem; color:var(--yellow); margin-bottom:10px; text-align:center;">🏆 RANKING FINAL</div>
+  <div id="end-ranking" style="width:100%; max-width:440px;"></div>
+  <div style="margin-top:20px; text-align:center; font-size:0.85rem; color:rgba(255,255,255,0.4);">¡Gracias por jugar!</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<script>
+let ROOM_ID = '';
+let playerName = '';
+let playerId   = '';
+let myScore    = 0;
+let voted      = false;
+let lastState  = '';
+let lastQText  = '';
+let playerTimerInterval = null;
+let questStep  = 0;
+const TOTAL_STEPS = 10;
+
+const TODAS_LAS_PREGUNTAS = [
+  { id:"lugar", q:"🌍 ¿Cuál es tu lugar favorito en el mundo?", h:"Puede ser una ciudad, un rincón..." },
+  { id:"comida", q:"🍕 ¿Cuál es tu comida favorita?", h:"¿Plato, postre, snack? ¡Sé específic@!" },
+  { id:"recuerdo", q:"✨ Cuenta un recuerdo especial tuyo", h:"Cosa memorable que te haya pasado..." },
+  { id:"miedo", q:"😱 ¿Cuál es tu mayor miedo o fobia?", h:"Arañas, alturas, sin Wi-Fi..." },
+  { id:"pasatiempo", q:"🎯 ¿Cuál es tu pasatiempo favorito?", h:"Cuando no haces nada..." },
+  { id:"secreto", q:"🤫 Algo que nadie sabe de ti", h:"¡No te preocupes, es para el juego!" },
+  { id:"sueno", q:"🌙 ¿Cuál es un sueño o meta pendiente?", h:"Algo que quieras lograr..." },
+  { id:"peli", q:"🎬 ¿Película o serie favorita?", h:"La que verías mil veces..." },
+  { id:"animal", q:"🐾 Si fueras un animal, ¿cuál serías y por qué?", h:"Ej: Gato, porque duermo." },
+  { id:"risa", q:"😂 ¿Qué cosa siempre te hace reír?", h:"Meme, situación..." },
+  { id:"verguenza", q:"😳 Tu momento más vergonzoso", h:"Ese que no te deja dormir a las 3 AM..." },
+  { id:"talento", q:"🎩 ¿Tienes algún talento inútil?", h:"Ej: mover las orejas..." },
+  { id:"cancion", q:"🎵 Canción que cantas en la ducha", h:"Tu hit de todos los días..." },
+  { id:"superpoder", q:"🦸 Si tuvieras un superpoder, ¿cuál sería?", h:"Volar, leer mentes..." },
+  { id:"famoso", q:"📸 Si fueras famoso, ¿por qué sería?", h:"¿Cantante, meme viral?" },
+  { id:"comida_odiada", q:"🤢 ¿Qué comida detestas?", h:"Eso que ni loco te comes..." },
+  { id:"frase", q:"💬 Una frase que siempre repites", h:"Tu muletilla clásica..." },
+  { id:"apodo", q:"🥸 ¿Cuál era tu apodo en el colegio (y por qué)?", h:"¡Sé sincer@!" },
+  { id:"robo", q:"🕵️ Si pudieras robar algo sin consecuencias...", h:"¿Qué sería?" },
+  { id:"obsesion", q:"😵 ¿Cuál es tu rara obsesión actual?", h:"Videos de limpieza, rocas..." },
+  { id:"mentira", q:"🤥 La mentira más grande que has dicho", h:"A tus papás, profes..." },
+  { id:"compra", q:"💸 La cosa más estúpida que has comprado", h:"Esa compra a las 2 AM..." },
+  { id:"habito", q:"😬 ¿Tienes un mal hábito?", h:"Morderte las uñas, dormir..." },
+  { id:"personaje", q:"📺 ¿A qué personaje de ficción te pareces?", h:"En personalidad..." },
+  { id:"infancia", q:"👶 ¿Qué querías ser de grande?", h:"Astronauta, veterinario..." },
+];
+let chosenQuestions = [];
+
+function initQuestionnaire() {
+  const container = document.getElementById('q-container');
+  container.innerHTML = '';
+  // Mezclar preguntas aleatoriamente
+  chosenQuestions = TODAS_LAS_PREGUNTAS.sort(() => 0.5 - Math.random()).slice(0, 10);
+  
+  chosenQuestions.forEach((item, i) => {
+    const isFirst = i === 0;
+    const isLast = i === chosenQuestions.length - 1;
+    
+    let buttonsHtml = '';
+    if (isFirst) {
+      buttonsHtml = `
+        <button class="btn-q" onclick="qNext(${i})">SIGUIENTE →</button>
+        <button class="btn-q skip" onclick="qSkip(${i})">Saltar</button>
+      `;
+    } else if (isLast) {
+      buttonsHtml = `
+        <button class="btn-q back" onclick="qBack(${i})">← Volver</button>
+        <button class="btn-q" style="background:var(--green);" onclick="terminarCuestionario()">🎮 ¡LISTO! ENTRAR</button>
+      `;
+    } else {
+      buttonsHtml = `
+        <button class="btn-q back" onclick="qBack(${i})">← Volver</button>
+        <button class="btn-q" onclick="qNext(${i})">SIGUIENTE →</button>
+        <button class="btn-q skip" onclick="qSkip(${i})">Saltar</button>
+      `;
+    }
+    
+    const div = document.createElement('div');
+    div.className = 'q-step' + (isFirst ? ' active' : '');
+    div.id = 'qs-' + i;
+    div.innerHTML = `
+      <div class="q-label">${item.q}</div>
+      <div class="q-hint">${item.h}</div>
+      <textarea class="cuestionario-input" id="a-${item.id}" placeholder="Tu respuesta..." maxlength="150"></textarea>
+      <div class="q-nav">${buttonsHtml}</div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+// ── PASO 1: NOMBRE Y PIN ─────────────────────────────────────────────
+document.getElementById('nombre-jugador').addEventListener('keypress', e => {
+  if (e.key === 'Enter') confirmarNombre();
+});
+document.getElementById('pin-sala').addEventListener('keypress', e => {
+  if (e.key === 'Enter') document.getElementById('nombre-jugador').focus();
+});
+
+window.onload = () => {
+    const params = new URLSearchParams(window.location.search);
+    const pin = params.get('pin');
+    if (pin) {
+        document.getElementById('pin-sala').value = pin.toUpperCase();
+        document.getElementById('pin-sala').style.display = 'none';
+        document.getElementById('nombre-jugador').focus();
+    }
+};
+
+function confirmarNombre() {
+  const pinInput = document.getElementById('pin-sala');
+  const valPin = pinInput.value.trim().toUpperCase();
+  const val = document.getElementById('nombre-jugador').value.trim();
+  const err = document.getElementById('error-nombre');
+  
+  if (!valPin || valPin.length < 4) { err.textContent = 'Falta el PIN de 4 dígitos.'; return; }
+  if (!val || val.length < 2) { err.textContent = 'Nombre muy corto (min 2 letras).'; return; }
+
+  ROOM_ID = valPin;
+  playerName = val;
+  playerId   = val.toLowerCase().replace(/\s+/g, '_');
+  err.textContent = '';
+
+  document.getElementById('q-nombre').textContent = playerName.toUpperCase();
+  initQuestionnaire(); // Cargar formato random antes de mostrar
+  showView('questionnaire');
+  updateQProgress();
+}
+
+// ── CUESTIONARIO ───────────────────────────────────────────────
+function showQStep(i) {
+  document.querySelectorAll('.q-step').forEach((el, idx) => {
+    el.classList.toggle('active', idx === i);
+  });
+  document.getElementById('q-step-num').textContent = i + 1;
+  updateQProgress();
+  // Focus en el textarea
+  setTimeout(() => {
+    const ta = document.querySelector(`#qs-${i} .cuestionario-input`);
+    if (ta) ta.focus();
+  }, 100);
+}
+
+function updateQProgress() {
+  const pct = ((questStep) / TOTAL_STEPS) * 100;
+  document.getElementById('q-progress').style.width = pct + '%';
+}
+
+function qNext(i) {
+  if (i < TOTAL_STEPS - 1) {
+    questStep = i + 1;
+    showQStep(i + 1);
+  }
+}
+function qBack(i) {
+  if (i > 0) {
+    questStep = i - 1;
+    showQStep(i - 1);
+  }
+}
+function qSkip(i) {
+  qNext(i);
+}
+
+function terminarCuestionario() {
+  const answers = {};
+  chosenQuestions.forEach(item => {
+    const el = document.getElementById(`a-${item.id}`);
+    if (el && el.value.trim() !== '') {
+      answers[item.q] = el.value.trim(); // Guardamos la pregunta entera y su respuesta
+    }
+  });
+
+  showView('lobby');
+  document.getElementById('player-nick').textContent = '👤 ' + playerName;
+  document.getElementById('player-nick-game').textContent = '👤 ' + playerName;
+
+  registrarJugador(answers);
+}
+
+// ── REGISTRO EN SERVIDOR ───────────────────────────────────────
+async function registrarJugador(questionnaire) {
+  try {
+    const res = await fetch('/api/join', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        name: playerName,
+        roomId: ROOM_ID,
+        questionnaire,
+      }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      startPlayerPolling();
+    } else {
+      // Reintentar
+      setTimeout(() => registrarJugador(questionnaire), 2000);
+    }
+  } catch(e) {
+    setTimeout(() => registrarJugador(questionnaire), 2000);
+  }
+}
+
+// ── POLLING JUGADOR ────────────────────────────────────────────
+let playerPoll = null;
+
+function startPlayerPolling() {
+  fetchPlayerRoom();
+  playerPoll = setInterval(fetchPlayerRoom, 2000);
+}
+
+async function fetchPlayerRoom() {
+  try {
+    const res = await fetch(`/api/room?id=${ROOM_ID}&playerId=${encodeURIComponent(playerId)}`);
+    if (!res.ok) return;
+    const data = await res.json();
+    renderPlayerState(data);
+  } catch(e) {}
+}
+
+function renderPlayerState(data) {
+  const state = data.state;
+
+  // Actualizar score
+  const me = (data.players || []).find(p => p.name.toLowerCase() === playerName.toLowerCase());
+  if (me) {
+    myScore = me.score;
+    updateScoreDisplays();
+  }
+
+  if (state === 'lobby') {
+    if (lastState !== 'lobby') showView('lobby');
+
+  } else if (state === 'question') {
+    const q = data.question;
+    if (!q) return;
+
+    // Si ya votó esta pregunta
+    if (data.myAnswer) {
+      showFeedback(data.myAnswer);
+      if (lastState !== 'feedback') lastState = 'feedback';
+      return;
+    }
+
+    if (lastState !== 'question' || lastQText !== q.text) {
+      lastQText = q.text;
+      voted = false;
+      showView('game');
+      // Habilitar botones
+      ['A','B','C','D'].forEach(l => {
+        document.getElementById('btn-'+l).classList.remove('deshabilitada','presionada');
+      });
+      document.getElementById('atencion-txt').innerHTML = '👀 ¡MIRA LA PANTALLA GRANDE!';
+      startPlayerTimer(q.timeLimit || 15, q.startedAt || Date.now());
+    }
+
+  } else if (state === 'reveal') {
+    clearPlayerTimer();
+    if (lastState !== 'reveal') {
+      if (data.myAnswer) {
+        showFeedback(data.myAnswer);
+      } else {
+        // No votó a tiempo
+        if (lastState !== 'late') showView('feedback');
+        document.getElementById('feedback-icon').textContent = '⏰';
+        document.getElementById('feedback-msg').textContent = '¡MUY LENTO!';
+        document.getElementById('feedback-pts').textContent = '+0 pts';
+        document.getElementById('feedback-box').style.borderColor = 'var(--red)';
+        lastState = 'late';
         return;
       }
-
-      document.getElementById('btn-unirse').innerText = "ENTRANDO...";
-
-      try {
-        const res = await fetch('/api/join', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: nombre, roomId: 'SABEN_ROOM_1' })
-        });
-        
-        const data = await res.json();
-        
-        if (data.success) {
-          // Cambiamos a la vista de botones
-          document.getElementById('zona-ingreso').style.display = 'none';
-          document.getElementById('zona-juego').style.display = 'block';
-        } else {
-          errorMsg.innerText = "Hubo un error al entrar.";
-          errorMsg.style.display = "block";
-          document.getElementById('btn-unirse').innerText = "¡VOY!";
-        }
-      } catch (e) {
-        errorMsg.innerText = "Error de conexión. Intenta de nuevo.";
-        errorMsg.style.display = "block";
-        document.getElementById('btn-unirse').innerText = "¡VOY!";
-      }
     }
 
-    function enviarVoto(opcion) {
-      // Por ahora solo da feedback visual. Aquí luego conectaremos con KV para sumar puntos.
-      alert(`¡Votaste la opción ${opcion}! Espera los resultados.`);
+  } else if (state === 'ranking') {
+    clearPlayerTimer();
+    if (lastState !== 'ranking') {
+      showView('lobby'); // Mostrar lobby (espera) durante el ranking del host
+      document.getElementById('player-nick').textContent = '👤 ' + playerName;
     }
-  </script>
+
+  } else if (state === 'end') {
+    clearPlayerTimer();
+    if (lastState !== 'end') {
+      showView('end');
+      renderPlayerEnd(data.scores || data.players);
+    }
+  }
+
+  lastState = state;
+}
+
+function showFeedback(ans) {
+  showView('feedback');
+  const box = document.getElementById('feedback-box');
+  if (ans.correct) {
+    document.getElementById('feedback-icon').textContent = '✅';
+    document.getElementById('feedback-msg').textContent = '¡CORRECTO!';
+    document.getElementById('feedback-pts').textContent = `+${ans.pts} pts`;
+    box.style.borderColor = 'var(--green)';
+  } else {
+    document.getElementById('feedback-icon').textContent = '❌';
+    document.getElementById('feedback-msg').textContent = '¡MAL!';
+    document.getElementById('feedback-pts').textContent = '+0 pts';
+    box.style.borderColor = 'var(--red)';
+  }
+}
+
+// ── VOTAR ──────────────────────────────────────────────────────
+async function votar(letter) {
+  if (voted) return;
+  voted = true;
+
+  // Feedback visual inmediato
+  ['A','B','C','D'].forEach(l => {
+    const btn = document.getElementById('btn-'+l);
+    if (l === letter) btn.classList.add('presionada');
+    else btn.classList.add('deshabilitada');
+  });
+  document.getElementById('atencion-txt').innerHTML = '⏳ RESPUESTA ENVIADA…';
+
+  try {
+    const res = await fetch('/api/vote', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ roomId: ROOM_ID, playerId, letter }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      showFeedback(data);
+      clearPlayerTimer();
+    }
+  } catch(e) {
+    // Reintenta
+    voted = false;
+    ['A','B','C','D'].forEach(l => {
+      document.getElementById('btn-'+l).classList.remove('deshabilitada','presionada');
+    });
+  }
+}
+
+// ── TIMER JUGADOR ──────────────────────────────────────────────
+function startPlayerTimer(seconds, startedAt) {
+  clearPlayerTimer();
+  const bar = document.getElementById('player-timer-bar');
+  const num = document.getElementById('player-timer');
+
+  function tick() {
+    const elapsed = (Date.now() - startedAt) / 1000;
+    const remaining = Math.max(0, seconds - elapsed);
+    const pct = (remaining / seconds) * 100;
+    num.textContent = Math.ceil(remaining);
+    num.classList.toggle('urgente', remaining <= 5);
+    bar.style.width = pct + '%';
+    if (remaining <= 0 && !voted) {
+      clearPlayerTimer();
+      voted = true;
+      ['A','B','C','D'].forEach(l => document.getElementById('btn-'+l).classList.add('deshabilitada'));
+      document.getElementById('atencion-txt').innerHTML = '⏰ ¡SE ACABÓ EL TIEMPO!';
+    }
+  }
+  tick();
+  playerTimerInterval = setInterval(tick, 500);
+}
+
+function clearPlayerTimer() {
+  if (playerTimerInterval) { clearInterval(playerTimerInterval); playerTimerInterval = null; }
+}
+
+// ── SCORE ──────────────────────────────────────────────────────
+function updateScoreDisplays() {
+  ['lobby-score','game-score','feedback-score'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = myScore + ' pts';
+  });
+}
+
+// ── RANKING FINAL (jugador) ────────────────────────────────────
+function renderPlayerEnd(scores) {
+  if (!scores) return;
+  const cont = document.getElementById('end-ranking');
+  cont.innerHTML = '';
+  scores.forEach((p, i) => {
+    const item = document.createElement('div');
+    const isMe = p.name.toLowerCase() === playerName.toLowerCase();
+    item.className = 'final-rank-item' + (isMe ? ' me' : '');
+    const medals = ['🥇','🥈','🥉'];
+    item.innerHTML = `
+      <div style="font-family:'Press Start 2P',monospace; font-size:0.8rem; color:var(--yellow); width:30px;">${medals[i] || (i+1)}</div>
+      <div style="flex:1; font-family:'Bangers',cursive; font-size:1.4rem;">${isMe ? '→ ' : ''}${p.name}${isMe ? ' ←' : ''}</div>
+      <div style="font-family:'Press Start 2P',monospace; font-size:0.8rem;">${p.score}</div>
+    `;
+    cont.appendChild(item);
+  });
+}
+
+// ── SHOW/HIDE VIEWS ────────────────────────────────────────────
+function showView(name) {
+  ['login','questionnaire','lobby','game','feedback','end'].forEach(v => {
+    const el = document.getElementById('view-' + v);
+    if (el) el.classList.toggle('hidden', v !== name);
+  });
+}
+</script>
 </body>
 </html>

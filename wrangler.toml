@@ -1,0 +1,14 @@
+name = "saben"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = "."
+
+[[kv_namespaces]]
+binding = "SABEN_DB"
+id = "d875392059ad48e581c7c6a37a301b18"
+
+[vars]
+HOST_KEY = "SABEN2025"
+
+# Cloudflare AI binding (para generar preguntas personalizadas)
+[ai]
+binding = "AI"
