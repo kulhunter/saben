@@ -29,8 +29,11 @@ export async function onRequestPost(context) {
 
     const playerId = playerName.toLowerCase().replace(/\s+/g, '_');
 
+    const AVATARS = ['🦊','🐼','🦅','🦁','🐻','🐸','🦄','🐙','🐵','🦖','🐧','🦉','🐢','🦋','🐶','🐹','🐒','🐯'];
+
     if (!existing) {
-      roomData.players.push({ name: playerName, id: playerId, score: 0, answered: false });
+      const avatar = AVATARS[Math.floor(Math.random() * AVATARS.length)];
+      roomData.players.push({ name: playerName, id: playerId, score: 0, answered: false, avatar });
     }
 
     // Guardar respuestas del cuestionario si vienen

@@ -5,8 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#111827">
-  <title>¡SABEN! — Jugar</title>
-  <meta name="description" content="Únete al juego de trivia personalizado en saben.cl. Sin descargas, sólo tu teléfono.">
+  <title>¡SABEN.cl! — Modo Jugador</title>
+  <meta name="description" content="Únete de inmediato al juego de trivia familiar. Úsalo como tu control remoto.">
+  <meta property="og:title" content="¡SABEN.cl! — Modo Jugador">
+  <meta property="og:description" content="Trivia masiva para grandes grupos. Responde desde tu celular.">
+  <meta name="author" content="Dan Tagle">
   <link rel="stylesheet" href="styles.css">
   <style>
     body {
@@ -19,8 +22,18 @@
     }
 
     /* ── LAYOUT DE VISTAS ── */
-    .view { width: 100%; max-width: 480px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+    .view { width: 100%; max-width: 480px; display: flex; flex-direction: column; align-items: center; gap: 16px; flex: 1; }
     .view.hidden { display: none !important; }
+
+    .footer-copy {
+      margin-top: 30px;
+      padding-bottom: 5px;
+      font-size: 0.75rem;
+      font-family: 'Press Start 2P', monospace;
+      color: rgba(255,255,255,0.3);
+      text-align: center;
+      width: 100%;
+    }
 
     /* ── CUESTIONARIO ── */
     #view-questionnaire {
@@ -715,5 +728,10 @@ function showView(name) {
   });
 }
 </script>
+
+<div class="footer-copy">
+  JUEGO CREADO POR DANTAGLE.CL <br>&copy; DANTAGLE+
+</div>
+
 </body>
 </html>

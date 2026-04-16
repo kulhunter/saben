@@ -33,17 +33,18 @@ export async function onRequestPost(context) {
       roomData.players.forEach(p => { p.answered = false; });
 
     } else if (action === 'next') {
-      // reveal → (next question OR ranking/end)
-      const nextIndex = roomData.currentQ + 1;
-
-      if (nextIndex < roomData.questions.length) {
-        roomData.currentQ = nextIndex;
-        roomData.state = 'question';
-        roomData.questionStartedAt = Date.now();
-        roomData.players.forEach(p => { p.answered = false; });
-      } else {
-        // Ya no hay más preguntas
-        roomData.state = 'end';
+      if (roomData.state === 'reveal') {
+        roomData.state = 'ranking';
+      } else if (roomData.state === 'ranking') {
+        const nextIndex = roomData.currentQ + 1;
+        if (nextIndex < roomData.questions.length) {
+          roomData.currentQ = nextIndex;
+          roomData.state = 'question';
+          roomData.questionStartedAt = Date.now();
+          roomData.players.forEach(p => { p.answered = false; });
+        } else {
+          roomData.state = 'end';
+        }
       }
 
     } else if (action === 'ranking') {

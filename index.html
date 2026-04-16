@@ -3,8 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>¡SABEN.cl! — Panel del Anfitrión</title>
-  <meta name="description" content="SABEN: El juego de trivia personalizado para eventos y reuniones familiares. Proyecta en la TV, juega desde el celular.">
+  <title>¡SABEN.cl! — El Juego de Trivia de Tu Familia</title>
+  <meta name="description" content="SABEN: Un divertido party-game de trivia autogenerado con Inteligencia Artificial. Conecta tu TV como anfitrión y usa tu celular como control.">
+  <meta property="og:title" content="¡SABEN.cl! — Juega en Familia">
+  <meta property="og:description" content="Trivia multijugador masiva. Ingresa a la sala y compite con tu celular en tiempo real.">
+  <meta name="author" content="Dan Tagle">
   <link rel="stylesheet" href="styles.css">
   <style>
     /* ── HOST-SPECIFIC LAYOUT ── */
@@ -196,20 +199,37 @@
 </head>
 <body>
 
-<!-- ENTRY MODAL -->
+<!-- ENTRY MODAL CON TUTORIAL -->
 <div id="host-key-modal">
-  <div class="modal-box">
-    <h2 style="font-size: 2.8rem; margin-bottom: 24px;">🎮 ¿A QUÉ VIENES?</h2>
-    <div style="display:flex; flex-direction:column; gap:16px;">
-      <button class="btn-comic" style="background:var(--cyan); font-size:1.8rem;" onclick="window.location.href='player.html'">
-        📱 SOY JUGADOR (Celu)
+  <div class="modal-box" style="max-width: 600px; padding: 28px;">
+    <h1 class="logo" style="margin-bottom:12px; font-size:4rem; animation:none; transform:none; text-shadow:-2px -2px 0 var(--black), 2px -2px 0 var(--black), -2px 2px 0 var(--black), 2px 2px 0 var(--black), 4px 4px 0 var(--magenta); line-height:0.9;">¡SABEN!</h1>
+    
+    <div class="tutorial-slider" style="text-align:left; background:rgba(0,0,0,0.4); border:3px solid var(--cyan); border-radius:8px; padding:16px; margin-bottom:20px; border-bottom-width:6px; border-right-width:6px;">
+      <h3 style="font-family:'Bangers'; font-size:1.6rem; color:var(--green); margin-bottom:10px;">¿CÓMO SE JUEGA ESTO?</h3>
+      <ul style="font-size:1.1rem; line-height:1.4; list-style:none; display:grid; gap:12px; color:#fff;">
+        <li><span style="font-size:1.5rem">📺</span> <b style="color:var(--yellow)">1. El Anfitrión:</b> Abre esta página en una TV o PC para crear una sala y proyectar el juego a todos.</li>
+        <li><span style="font-size:1.5rem">📱</span> <b style="color:var(--cyan)">2. Los Jugadores:</b> Escanean el código QR en la pantalla usando la cámara de su celular. ¡Sin descargar apps!</li>
+        <li><span style="font-size:1.5rem">🧠</span> <b style="color:var(--magenta)">3. IA Mágica:</b> Nuestra Inteligencia Artificial escribirá el juego basándose en las respuestas secretas de tu familia.</li>
+        <li><span style="font-size:1.5rem">🏎️</span> <b style="color:var(--green)">4. A lo Mario Kart:</b> Contesta RÁPIDO y BIEN para ganar más puntaje. ¡El que pestañea pierde!</li>
+      </ul>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+      <button class="btn-comic" style="background:var(--cyan); font-size:1.5rem; padding:8px;" onclick="window.location.href='player.html'">
+        📱 SOY JUGADOR (CELULAR)
       </button>
-      <button class="btn-comic" style="background:var(--magenta); color:var(--white); font-size:1.8rem;" onclick="ingresarComoHost(false)">
-        📺 NUEVA PARTIDA (TV)
+      <button class="btn-comic" style="background:var(--magenta); color:var(--white); font-size:1.5rem; padding:8px;" onclick="ingresarComoHost(false)">
+        📺 SOY ANFITRIÓN (PROYECTAR)
       </button>
-      <button class="btn-comic hidden" id="btn-retomar" style="background:var(--yellow); color:var(--black); font-size:1.8rem;" onclick="ingresarComoHost(true)">
-        🔄 RETOMAR SALA (PIN: <span id="saved-pin"></span>)
+    </div>
+    <div style="margin-top:12px;">
+      <button class="btn-comic hidden" id="btn-retomar" style="background:var(--yellow); color:var(--black); font-size:1.4rem; padding:8px;" onclick="ingresarComoHost(true)">
+        🔄 RETOMAR SALA TV (PIN: <span id="saved-pin"></span>)
       </button>
+    </div>
+
+    <div style="margin-top:20px; font-size:0.75rem; font-family:'Press Start 2P', monospace; color:rgba(255,255,255,0.3);">
+      JUEGO CREADO POR DANTAGLE.CL <br>&copy; DANTAGLE+
     </div>
   </div>
 </div>
@@ -305,12 +325,9 @@
         <div class="reveal-jugadores" id="rev-jugadores"></div>
       </div>
 
-      <div style="display:flex; gap:12px; flex-wrap:wrap;">
-        <button class="btn-comic" style="flex:1; min-width:180px;" onclick="siguientePregunta()">
-          ➡️ SIGUIENTE PREGUNTA
-        </button>
-        <button class="btn-comic" style="flex:0; min-width:160px; background:var(--cyan);" onclick="mostrarRanking()">
-          🏆 VER RANKING
+      <div style="display:flex; justify-content:center; margin-top: 10px;">
+        <button class="btn-comic" style="flex:1; max-width:400px;" onclick="siguientePregunta()">
+          ➡️ CONTINUAR
         </button>
       </div>
     </div>
@@ -470,7 +487,7 @@ function renderLobby(data) {
         tag.style.transform = `rotate(${rot}deg)`;
         tag.style.background = COLORS[i % COLORS.length];
         tag.style.color = i % COLORS.length === 1 ? '#fff' : '#000';
-        tag.textContent = '⭐ ' + p.name;
+        tag.textContent = (p.avatar || '⭐') + ' ' + p.name;
         wall.appendChild(tag);
       });
     }
@@ -622,7 +639,7 @@ function renderRevealChips(reveals) {
   sorted.forEach(r => {
     const chip = document.createElement('div');
     chip.className = 'reveal-chip ' + (r.correct ? 'ok' : 'mal');
-    chip.textContent = (r.correct ? '✅ ' : '❌ ') + r.name + (r.correct ? ` +${r.pts}` : '');
+    chip.textContent = (r.correct ? '✅ ' : '❌ ') + (r.avatar || '') + ' ' + r.name + (r.correct ? ` +${r.pts}` : '');
     cont.appendChild(chip);
   });
 }
@@ -639,7 +656,7 @@ function renderRanking(scores) {
     const medals = ['🥇','🥈','🥉'];
     item.innerHTML = `
       <div class="rank-badge">${medals[i] || (i+1)}</div>
-      <div style="flex:1; font-size:1.5rem;">${p.name}</div>
+      <div style="flex:1; font-size:1.5rem;">${p.avatar || '👀'} ${p.name}</div>
       <div style="font-family:'Press Start 2P',monospace; font-size:0.9rem; color:var(--yellow);">${p.score} pts</div>
     `;
     cont.appendChild(item);
