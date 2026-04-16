@@ -163,9 +163,10 @@
     }
     .modal-box h2 {
       font-family: 'Bangers', cursive;
-      font-size: 2.2rem;
+      font-size: 2.5rem;
       color: var(--yellow);
-      margin-bottom: 16px;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 0 var(--black);
     }
 
     /* ── PROGRESS ── */
@@ -260,12 +261,12 @@
       </div>
 
       <div class="panel panel-yellow">
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
-          <h3 style="font-family:'Bangers',cursive; font-size:2rem; margin:0;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:16px;">
+          <h3 style="font-family:'Bangers',cursive; font-size:2.8rem; margin:0; color:var(--yellow); text-shadow:3px 3px 0 var(--black);">
             🎮 SALA DE ESPERA
-            <span style="font-size:1.2rem; color:var(--black); background:var(--black); color:var(--yellow); padding:2px 12px; border-radius:20px; margin-left:10px;" id="contador">0</span>
+            <span style="font-size:1.5rem; background:var(--yellow); color:var(--black); padding:4px 16px; border-radius:30px; margin-left:14px; box-shadow:3px 3px 0 var(--black);" id="contador">0</span>
           </h3>
-          <span class="num-pregunta pulse" style="color:var(--black);">ESPERANDO JUGADORES…</span>
+          <span class="num-pregunta pulse" style="color:var(--cyan); font-size:1rem; letter-spacing:3px;">ESPERANDO JUGADORES…</span>
         </div>
         <hr class="comic-hr">
         <div id="lista-jugadores" class="player-wall">
@@ -482,11 +483,14 @@ function renderLobby(data) {
         }
         const tag = document.createElement('div');
         tag.className = 'player-tag';
-        const rot = (Math.random() * 10) - 5;
+        const rot = (Math.random() * 6) - 3;
         tag.style.setProperty('--rot', `${rot}deg`);
         tag.style.transform = `rotate(${rot}deg)`;
-        tag.style.background = COLORS[i % COLORS.length];
-        tag.style.color = i % COLORS.length === 1 ? '#fff' : '#000';
+        tag.style.background = 'rgba(0,0,0,0.6)';
+        tag.style.borderColor = COLORS[i % COLORS.length];
+        tag.style.color = '#fff';
+        tag.style.fontSize = '1.8rem';
+        tag.style.padding = '10px 24px';
         tag.textContent = (p.avatar || '⭐') + ' ' + p.name;
         wall.appendChild(tag);
       });

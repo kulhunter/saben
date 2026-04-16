@@ -16,28 +16,23 @@
 
 body {
   font-family: 'Comic Neue', cursive;
-  background-color: var(--dark);
-  background-image:
-    linear-gradient(rgba(0,239,239,0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,239,239,0.07) 1px, transparent 1px);
-  background-size: 40px 40px;
+  background-color: #030712;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(0, 239, 239, 0.15) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(255, 0, 170, 0.15) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(255, 215, 0, 0.1) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(57, 255, 20, 0.1) 0px, transparent 50%);
   color: var(--white);
   min-height: 100vh;
   overflow-x: hidden;
 }
 
-/* ── SCANLINE OVERLAY ─────────────────── */
 body::after {
   content: '';
   position: fixed;
   inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0,0,0,0.15) 2px,
-    rgba(0,0,0,0.15) 4px
-  );
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+  background-size: 100% 4px, 3px 100%;
   pointer-events: none;
   z-index: 9999;
 }
@@ -60,24 +55,40 @@ h1.logo {
   transform: rotate(-2deg);
 }
 
-/* ── PANELS ───────────────────────────── */
 .panel {
-  background: rgba(255,255,255,0.05);
-  border: 4px solid var(--cyan);
-  border-radius: 12px;
-  padding: 28px;
-  box-shadow: 0 0 20px rgba(0,239,239,0.3), 6px 6px 0 var(--magenta);
+  background: rgba(17, 24, 39, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 3px solid rgba(0, 239, 239, 0.3);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 
+    0 0 30px rgba(0,0,0,0.5),
+    inset 0 0 20px rgba(0, 191, 191, 0.05);
   position: relative;
+  overflow: hidden;
+}
+.panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 239, 239, 0.5), transparent);
 }
 
 .panel-yellow {
-  border-color: var(--yellow);
-  box-shadow: 0 0 20px rgba(255,215,0,0.3), 6px 6px 0 var(--cyan);
+  border-color: rgba(255, 215, 0, 0.4);
+  box-shadow: 0 0 40px rgba(255, 215, 0, 0.1);
+}
+.panel-yellow::before {
+  background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.6), transparent);
 }
 
 .panel-magenta {
-  border-color: var(--magenta);
-  box-shadow: 0 0 20px rgba(255,0,170,0.3), 6px 6px 0 var(--yellow);
+  border-color: rgba(255, 0, 170, 0.4);
+  box-shadow: 0 0 40px rgba(255, 0, 170, 0.1);
+}
+.panel-magenta::before {
+  background: linear-gradient(90deg, transparent, rgba(255, 0, 170, 0.6), transparent);
 }
 
 /* ── BOTÓN PRINCIPAL ──────────────────── */
@@ -269,17 +280,20 @@ input[type="text"]::placeholder { color: rgba(255,255,255,0.35); }
 }
 .timer-number.urgente { color: var(--red); text-shadow: 0 0 20px var(--red), 3px 3px 0 var(--black); }
 
-/* ── PREGUNTA ─────────────────────────── */
 .pregunta-texto {
   font-family: 'Comic Neue', cursive;
   font-weight: 700;
-  font-size: clamp(1.6rem, 3.5vw, 2.6rem);
-  line-height: 1.3;
-  background: rgba(0,0,0,0.65);
-  border: 3px solid var(--yellow);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 0 15px rgba(255,215,0,0.2);
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  line-height: 1.2;
+  background: rgba(17, 24, 39, 0.9);
+  border: 4px solid var(--yellow);
+  border-radius: 20px;
+  padding: 40px;
+  text-align: center;
+  box-shadow: 
+    0 20px 50px rgba(0,0,0,0.5),
+    0 0 30px rgba(255, 215, 0, 0.1);
+  margin-bottom: 20px;
 }
 
 /* ── RESULTADOS / PUNTOS ──────────────── */
