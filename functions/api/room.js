@@ -40,6 +40,16 @@ export async function onRequestGet(context) {
       };
     }
 
+    // Contar votos para esta pregunta
+    if (roomData.answers && roomData.currentQ >= 0) {
+      let vc = 0;
+      roomData.players.forEach(p => {
+        const key = `${roomData.currentQ}_${p.id}`;
+        if (roomData.answers[key]) vc++;
+      });
+      resp.voteCount = vc;
+    }
+
     // ¿Ya respondió este jugador?
     if (playerId && roomData.answers) {
       const key = `${roomData.currentQ}_${playerId}`;

@@ -349,6 +349,7 @@ let questStep  = 0;
 const TOTAL_STEPS = 10;
 
 const TODAS_LAS_PREGUNTAS = [
+  // ── Originales mejoradas ──
   { id:"lugar", q:"🌍 ¿Cuál es tu lugar favorito en el mundo?", h:"Puede ser una ciudad, un rincón..." },
   { id:"comida", q:"🍕 ¿Cuál es tu comida favorita?", h:"¿Plato, postre, snack? ¡Sé específic@!" },
   { id:"recuerdo", q:"✨ Cuenta un recuerdo especial tuyo", h:"Cosa memorable que te haya pasado..." },
@@ -367,13 +368,32 @@ const TODAS_LAS_PREGUNTAS = [
   { id:"comida_odiada", q:"🤢 ¿Qué comida detestas?", h:"Eso que ni loco te comes..." },
   { id:"frase", q:"💬 Una frase que siempre repites", h:"Tu muletilla clásica..." },
   { id:"apodo", q:"🥸 ¿Cuál era tu apodo en el colegio (y por qué)?", h:"¡Sé sincer@!" },
-  { id:"robo", q:"🕵️ Si pudieras robar algo sin consecuencias...", h:"¿Qué sería?" },
   { id:"obsesion", q:"😵 ¿Cuál es tu rara obsesión actual?", h:"Videos de limpieza, rocas..." },
   { id:"mentira", q:"🤥 La mentira más grande que has dicho", h:"A tus papás, profes..." },
   { id:"compra", q:"💸 La cosa más estúpida que has comprado", h:"Esa compra a las 2 AM..." },
   { id:"habito", q:"😬 ¿Tienes un mal hábito?", h:"Morderte las uñas, dormir..." },
   { id:"personaje", q:"📺 ¿A qué personaje de ficción te pareces?", h:"En personalidad..." },
   { id:"infancia", q:"👶 ¿Qué querías ser de grande?", h:"Astronauta, veterinario..." },
+  // ── NUEVAS: Extremas y Divertidas ──
+  { id:"zombie", q:"🧟 Si fueras zombie, ¿a quién de los presentes te comerías PRIMERO?", h:"¡Sin piedad! ¿Quién es el más lento?" },
+  { id:"crush_secreto", q:"😍 Confiesa: ¿quién es o fue tu crush MÁS vergonzoso?", h:"Famoso, vecino, profe, compañero..." },
+  { id:"millon", q:"💰 ¿Qué harías si ganaras 1 millón de dólares AHORA MISMO?", h:"Lo primero que se te ocurra..." },
+  { id:"isla_desierta", q:"🏝️ 3 cosas que llevarías a una isla desierta", h:"Solo 3, elige sabiamente..." },
+  { id:"ultimo_dia", q:"⏰ Si fuera tu ÚLTIMO día en la Tierra, ¿qué harías?", h:"No vale decir 'dormir'..." },
+  { id:"intercambio", q:"🔄 ¿Con quién intercambiarías cuerpo por un día?", h:"Famoso, amigo, mascota..." },
+  { id:"confesion", q:"🙈 Confiesa algo que NUNCA has dicho en voz alta", h:"Aquí entre nos... 🤫" },
+  { id:"peor_regalo", q:"🎁 ¿Cuál es el PEOR regalo que has recibido?", h:"Y tuviste que fingir que te gustó..." },
+  { id:"karaoke", q:"🎤 ¿Cuál es tu canción de karaoke? (la que cantas a todo pulmón)", h:"Esa que cantas horrible pero con pasión..." },
+  { id:"pelea_famoso", q:"🥊 ¿A qué famoso le GANARÍAS en una pelea?", h:"Sé creativo... o realista." },
+  { id:"tatuaje", q:"🖊️ ¿Qué te tatuarías si fuera gratis y sin dolor?", h:"¿Y dónde?" },
+  { id:"robar", q:"🕵️ Si pudieras robar algo sin consecuencias, ¿qué sería?", h:"Sin cámaras, sin policía..." },
+  { id:"mentira_exitosa", q:"🤥 La mentira MÁS grande que te han CREÍDO", h:"Esa que nadie descubrió..." },
+  { id:"app_eliminar", q:"📱 Si tuvieras que borrar TODAS las apps menos UNA, ¿cuál salvas?", h:"Solo UNA sobrevive..." },
+  { id:"cena_famosos", q:"🍽️ ¿Con qué 3 personas (vivas o muertas) cenarías?", h:"Tienes 3 sillas vacías..." },
+  { id:"gobierno", q:"🏛️ Si fueras presidente por un día, ¿qué ley crearías?", h:"Tu primera y única ley..." },
+  { id:"peor_cita", q:"💔 Cuenta tu PEOR cita o experiencia amorosa", h:"Esa que fue un DESASTRE..." },
+  { id:"revelar", q:"📢 ¿Qué secreto revelarías de alguien cercano? (sin decir nombre)", h:"El chisme que te mueres por contar..." },
+  { id:"reality", q:"📺 Si estuvieras en un reality show, ¿serías el villano o el héroe?", h:"¡Sé honesto!" },
 ];
 let chosenQuestions = [];
 

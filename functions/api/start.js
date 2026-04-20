@@ -1,10 +1,10 @@
 // POST /api/start  — El anfitrión inicia el juego
 // Body: { roomId, hostKey }
 //
-// Esta función genera las preguntas a partir de los cuestionarios
-// de los jugadores usando la API de Cloudflare AI (o un fallback JSON).
+// Genera preguntas personalizadas ultra-creativas a partir de
+// los cuestionarios usando Cloudflare AI con prompt mejorado.
 
-const HOST_KEY = 'SABEN2025'; // Cämbialo en Cloudflare env vars si quieres
+const HOST_KEY = 'SABEN2025';
 
 export async function onRequestPost(context) {
   const { request, env } = context;
@@ -60,79 +60,144 @@ async function generateQuestions(roomData, env) {
   // Si hay respuestas de cuestionario, intentar generar preguntas personalizadas
   if (playerEntries.length > 0) {
     try {
-      const questions = await generateWithAI(playerEntries, env);
+      const questions = await generateWithAI(playerEntries, roomData.players, env);
       if (questions && questions.length >= 5) return shuffle(questions);
     } catch (e) {
-      console.error('AI generation failed, using fallback', e);
+      console.error('AI generation failed, using fallback:', e.message);
     }
   }
 
   // Fallback: preguntas genéricas de cultura general
-  return shuffle(FALLBACK_QUESTIONS);
+  return shuffle(FALLBACK_QUESTIONS).slice(0, 10);
 }
 
-async function generateWithAI(playerEntries, env) {
+async function generateWithAI(playerEntries, players, env) {
+  const playerNames = players.map(p => p.name);
+  const namesStr = playerNames.join(', ');
+
   const context = playerEntries.map(entry => {
-    let parts = [`== Jugador: ${entry.playerName} ==`];
+    let parts = [`★ JUGADOR: ${entry.playerName}`];
     for (let q in entry.answers) {
-      parts.push(`- ${q}: ${entry.answers[q]}`);
+      parts.push(`  → ${q}: ${entry.answers[q]}`);
     }
     return parts.join('\n');
   }).join('\n\n');
 
-  const prompt = `Eres el creador de un juego de trivia familiar en Chile. 
-A continuación hay información personal que varios participantes escribieron sobre sí mismos:
+  const prompt = `Eres el DIRECTOR CREATIVO de "SABEN", el juego social más exitoso de Latinoamérica. Tu trabajo es crear preguntas de trivia HILARANTES y PERSONALIZADAS basadas en lo que los jugadores revelaron sobre sí mismos.
 
+JUGADORES Y SUS SECRETOS:
 ${context}
 
-Tu tarea: Crear EXACTAMENTE 20 preguntas de trivia que sean MUY DIVERTIDAS, variadas y originales basadas en esta información.
-Tienes que hacer que se sienta como un juego de salón o fiesta (al estilo Kahoot / Jackbox).
-Asegúrate de incluir HARTOS TIPOS DE PREGUNTAS DISTINTOS, por ejemplo:
-1. "Descubre quién es": (ej: "¿Quién de nosotros es capaz de [respuesta del jugador]?")
-2. "Verdadero o Falso": (ej: "¿Es cierto que [nombre] le tiene pánico a [respuesta]?") (Usa falso y verdad al azar).
-3. "Adivina la mentira": Inventa 3 hechos súper falsos sobre alguien y pon su secreto real como la opción correcta (o viceversa).
-4. El peor escenario: (ej: "Si tuviéramos que comer una sola cosa, a [nombre] le encantaría comer...")
-5. Cosas locas y situaciones graciosas basadas estrictamente en la información de arriba.
+TODOS LOS JUGADORES: ${namesStr}
 
-REGLAS CRUCIALES:
-- Cada pregunta debe referirse a los participantes y tener 4 opciones (A, B, C, D), SOLO UNA correcta.
+═══════════════════════════════════════
+TIPOS DE PREGUNTAS — Usa TODOS estos tipos bien mezclados:
 
-Responde ÚNICAMENTE con un array JSON válido con este formato exacto (sin markdown, sin explicaciones):
-[
-  {
-    "text": "¿Cuál es el lugar favorito de [nombre]?",
-    "options": [
-      {"letter":"A","text":"París","icon":"🗼"},
-      {"letter":"B","text":"La playa","icon":"🏖️"},
-      {"letter":"C","text":"Las montañas","icon":"⛰️"},
-      {"letter":"D","text":"Su cama","icon":"🛏️"}
-    ],
-    "correctLetter": "B",
-    "category": "Sobre [nombre]",
-    "author": "[nombre]",
-    "timeLimit": 15
+🕵️ DETECTIVE — "¿Quién de nosotros confesó que [cita textual]?"
+   Opciones: nombres de jugadores reales. Solo uno dijo eso.
+
+🧟 ZOMBIE — "Si ${playerNames[0] || 'alguien'} fuera zombi, basándonos en lo que sabemos, ¿qué haría primero?"
+   Opciones: acciones graciosas inventadas basadas en sus respuestas.
+
+🤥 VERDAD O MENTIRA — "¿Cuál de estas es VERDAD sobre [nombre]?"
+   3 opciones inventadas pero creíbles + 1 sacada de sus respuestas reales.
+
+🔮 MÁS PROBABLE — "¿Quién es MÁS PROBABLE que [situación absurda/graciosa]?"
+   Opciones: nombres de jugadores, basándonos en sus personalidades.
+
+💀 DILEMA EXTREMO — "Si solo pudiéramos salvar a UNO de un meteorito, ¿quién sería más útil para la humanidad según sus talentos?"
+   Opciones: nombres de jugadores.
+
+🍽️ DATOS CRUZADOS — "¿Cuál es la comida favorita de [nombre]?" o "¿Qué le da más miedo a [nombre]?"
+   Opciones: respuestas REALES de distintos jugadores, solo una corresponde al jugador mencionado.
+
+🎭 INTERCAMBIO — "Si [nombre1] y [nombre2] intercambiaran vidas por un día, ¿qué haría [nombre1] primero?"
+   Opciones: situaciones cómicas basadas en la personalidad de cada uno.
+
+😱 PESADILLA — "¿Cuál sería la PEOR pesadilla de [nombre] según lo que nos contó?"
+   Opciones basadas en sus miedos/fobias/respuestas.
+
+🎲 SITUACIÓN LOCA — "Estamos todos en un reality show. ¿Quién sería eliminado primero y por qué?"
+   Opciones: nombres con razones graciosas.
+
+═══════════════════════════════════════
+
+REGLAS ESTRICTAS:
+1. Genera EXACTAMENTE 15 preguntas
+2. Cada pregunta tiene 4 opciones (A, B, C, D), SOLO UNA es correcta
+3. Usa los NOMBRES REALES de los jugadores en las opciones siempre que se pueda
+4. Las preguntas deben hacer REÍR A CARCAJADAS — humor absurdo, situaciones extremas
+5. Incluye EMOJIS creativos en el texto de las preguntas
+6. Las opciones incorrectas deben ser graciosas Y creíbles
+7. Varía el timeLimit: 15 para preguntas directas, 20 para las que requieren pensar
+8. Cada opción DEBE tener un emoji como "icon"
+9. NO repitas el mismo tipo de pregunta dos veces seguidas
+10. MEZCLA preguntas sobre TODOS los jugadores — no favorezcas a ninguno
+
+FORMATO — Responde ÚNICAMENTE con un array JSON válido. Sin markdown. Sin explicaciones. Sin \`\`\`:
+[{"text":"¿pregunta?","options":[{"letter":"A","text":"opción","icon":"🎯"},{"letter":"B","text":"opción","icon":"💀"},{"letter":"C","text":"opción","icon":"🔥"},{"letter":"D","text":"opción","icon":"😂"}],"correctLetter":"A","category":"Detective","author":"NombreJugador","timeLimit":15}]`;
+
+  // Intentar con modelo grande primero, fallback a modelo pequeño
+  let response;
+  const messages = [
+    { role: 'system', content: 'Eres un generador de JSON perfecto. SOLO respondes con JSON válido. Sin markdown. Sin explicaciones. Sin comentarios. Sin ```.' },
+    { role: 'user', content: prompt }
+  ];
+
+  try {
+    response = await env.AI.run('@cf/meta/llama-3.3-70b-instruct-fp8-fast', {
+      messages,
+      max_tokens: 4096,
+      temperature: 0.85,
+    });
+  } catch (modelErr) {
+    // Fallback al modelo más pequeño
+    response = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+      messages,
+      max_tokens: 3500,
+      temperature: 0.8,
+    });
   }
-]`;
-
-  const response = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
-    messages: [
-      { role: 'system', content: 'Responde SOLO con JSON válido, sin markdown.' },
-      { role: 'user', content: prompt }
-    ],
-    max_tokens: 3000,
-    temperature: 0.8,
-  });
 
   const raw = (response.response || '').trim();
-  // Extraer el JSON aunque haya texto extra
+
+  // Extraer JSON aunque haya texto extra
   const jsonMatch = raw.match(/\[[\s\S]*\]/);
   if (!jsonMatch) throw new Error('No se encontró JSON en la respuesta de AI');
 
-  const parsed = JSON.parse(jsonMatch[0]);
-  return parsed;
+  let parsed;
+  try {
+    parsed = JSON.parse(jsonMatch[0]);
+  } catch (parseErr) {
+    // Intentar limpiar JSON malformado
+    const cleaned = jsonMatch[0]
+      .replace(/,\s*]/g, ']')
+      .replace(/,\s*}/g, '}')
+      .replace(/[\x00-\x1F\x7F]/g, ' ');
+    parsed = JSON.parse(cleaned);
+  }
+
+  // Validar y normalizar cada pregunta
+  const letters = ['A', 'B', 'C', 'D'];
+  const defaultIcons = ['🔷', '❤️', '⚡', '🌿'];
+
+  return parsed
+    .filter(q => q && q.text && q.options && q.options.length === 4 && q.correctLetter)
+    .map(q => ({
+      text: q.text,
+      correctLetter: q.correctLetter,
+      category: q.category || 'Trivia',
+      author: q.author || '',
+      timeLimit: q.timeLimit || 15,
+      options: q.options.map((opt, i) => ({
+        letter: letters[i],
+        text: opt.text || `Opción ${letters[i]}`,
+        icon: opt.icon || defaultIcons[i],
+      })),
+    }));
 }
 
-// ── Preguntas de respaldo ─────────────────────────────────────────────────
+// ── Preguntas de respaldo (cuando la IA falla) ───────────────────────────
 const FALLBACK_QUESTIONS = [
   {
     text: '¿Cuál es la capital de Chile?',
@@ -253,6 +318,66 @@ const FALLBACK_QUESTIONS = [
     correctLetter: 'D',
     category: 'Música',
     timeLimit: 12,
+  },
+  {
+    text: '¿En qué país se originó la pizza?',
+    options: [
+      { letter: 'A', text: 'Francia', icon: '🇫🇷' },
+      { letter: 'B', text: 'Italia', icon: '🇮🇹' },
+      { letter: 'C', text: 'Grecia', icon: '🇬🇷' },
+      { letter: 'D', text: 'España', icon: '🇪🇸' },
+    ],
+    correctLetter: 'B',
+    category: 'Gastronomía',
+    timeLimit: 10,
+  },
+  {
+    text: '¿Cuál es el hueso más largo del cuerpo humano?',
+    options: [
+      { letter: 'A', text: 'Tibia', icon: '🦴' },
+      { letter: 'B', text: 'Húmero', icon: '💪' },
+      { letter: 'C', text: 'Fémur', icon: '🦵' },
+      { letter: 'D', text: 'Radio', icon: '🤲' },
+    ],
+    correctLetter: 'C',
+    category: 'Ciencia',
+    timeLimit: 15,
+  },
+  {
+    text: '¿Qué planeta es conocido como el "planeta rojo"?',
+    options: [
+      { letter: 'A', text: 'Venus', icon: '✨' },
+      { letter: 'B', text: 'Júpiter', icon: '🪐' },
+      { letter: 'C', text: 'Marte', icon: '🔴' },
+      { letter: 'D', text: 'Saturno', icon: '💫' },
+    ],
+    correctLetter: 'C',
+    category: 'Ciencia',
+    timeLimit: 10,
+  },
+  {
+    text: '¿Cuál es el país más grande del mundo por superficie?',
+    options: [
+      { letter: 'A', text: 'China', icon: '🇨🇳' },
+      { letter: 'B', text: 'Canadá', icon: '🇨🇦' },
+      { letter: 'C', text: 'Rusia', icon: '🇷🇺' },
+      { letter: 'D', text: 'Estados Unidos', icon: '🇺🇸' },
+    ],
+    correctLetter: 'C',
+    category: 'Geografía',
+    timeLimit: 15,
+  },
+  {
+    text: '¿Quién escribió "Cien años de soledad"?',
+    options: [
+      { letter: 'A', text: 'Pablo Neruda', icon: '📝' },
+      { letter: 'B', text: 'Gabriel García Márquez', icon: '📚' },
+      { letter: 'C', text: 'Mario Vargas Llosa', icon: '🖊️' },
+      { letter: 'D', text: 'Isabel Allende', icon: '📖' },
+    ],
+    correctLetter: 'B',
+    category: 'Literatura',
+    timeLimit: 15,
   },
 ];
 

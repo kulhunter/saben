@@ -49,6 +49,13 @@ export async function onRequestPost(context) {
 
     } else if (action === 'ranking') {
       roomData.state = 'ranking';
+    } else if (action === 'regenerate') {
+      // Nueva ronda: mantener jugadores y cuestionarios, resetear puntajes
+      roomData.state = 'lobby';
+      roomData.currentQ = -1;
+      roomData.answers = {};
+      roomData.questions = [];
+      roomData.players.forEach(p => { p.score = 0; p.answered = false; });
     } else if (action === 'reset') {
       // Reiniciar la sala completamente
       roomData = { state: 'lobby', players: [], questions: [], currentQ: -1, answers: {}, questionnaire: {} };

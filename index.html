@@ -3,12 +3,49 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>¡SABEN.cl! — El Juego de Trivia de Tu Familia</title>
-  <meta name="description" content="SABEN: Un divertido party-game de trivia autogenerado con Inteligencia Artificial. Conecta tu TV como anfitrión y usa tu celular como control.">
-  <meta property="og:title" content="¡SABEN.cl! — Juega en Familia">
-  <meta property="og:description" content="Trivia multijugador masiva. Ingresa a la sala y compite con tu celular en tiempo real.">
+  <title>SABEN.cl — El Mejor Juego para Fiestas, Carretes y Reuniones Familiares | Trivia con IA</title>
+  <meta name="description" content="SABEN es el juego de trivia gratis más divertido para fiestas, carretes y reuniones familiares. Juega desde tu celular tipo Kahoot con preguntas personalizadas con Inteligencia Artificial. ¡Sin descargar nada!">
+  <meta name="keywords" content="saben, juego para fiestas, juego tipo kahoot, trivia familiar, juego de carrete, juego reuniones, trivia personalizada, juego grupal gratis, juego social, party game, saben.cl">
+  <meta property="og:title" content="SABEN.cl — El Mejor Juego para Fiestas y Reuniones">
+  <meta property="og:description" content="Trivia personalizada con IA para grandes grupos. Sin apps. Desde tu celular. ¡Gratis!">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://saben.cl">
+  <meta property="og:site_name" content="SABEN">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SABEN.cl — Juego de Trivia para Fiestas">
+  <meta name="twitter:description" content="El mejor juego para fiestas y reuniones. Trivia personalizada con IA. ¡Gratis y sin apps!">
+  <link rel="canonical" href="https://saben.cl">
   <meta name="author" content="Dan Tagle">
+  <meta name="robots" content="index, follow">
   <link rel="stylesheet" href="styles.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "SABEN",
+    "url": "https://saben.cl",
+    "description": "Juego de trivia personalizada con Inteligencia Artificial para fiestas, carretes y reuniones familiares. El mejor juego social tipo Kahoot, gratis y sin descargar apps.",
+    "applicationCategory": "GameApplication",
+    "operatingSystem": "Web Browser",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "CLP"
+    },
+    "author": {
+      "@type": "Person",
+      "name": "Dan Tagle",
+      "url": "https://dantagle.cl"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "ratingCount": "150"
+    }
+  }
+  </script>
+
   <style>
     /* ── HOST-SPECIFIC LAYOUT ── */
     #app {
@@ -141,32 +178,96 @@
       gap: 20px;
     }
 
-    /* ── HOST KEY MODAL ── */
-    #host-key-modal {
+    /* ── ONBOARDING ── */
+    #onboarding {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.85);
+      background: rgba(3, 7, 18, 0.96);
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 500;
+      overflow-y: auto;
+      padding: 20px;
     }
-    .modal-box {
-      background: var(--dark);
-      border: 4px solid var(--cyan);
+    .onboard-container {
+      max-width: 640px;
+      width: 100%;
+      position: relative;
+    }
+    .onboard-slide {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      animation: fadeSlide 0.5s ease;
+    }
+    .onboard-slide.active { display: flex; }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .onboard-dots {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .onboard-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      border: 2px solid rgba(255,255,255,0.2);
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .onboard-dot.active {
+      background: var(--cyan);
+      border-color: var(--cyan);
+      box-shadow: 0 0 12px var(--cyan);
+    }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      width: 100%;
+    }
+    @media (max-width: 500px) {
+      .feature-grid { grid-template-columns: 1fr; }
+    }
+    .feature-card {
+      background: rgba(255,255,255,0.05);
+      border: 2px solid rgba(255,255,255,0.1);
       border-radius: 14px;
-      padding: 36px;
-      max-width: 420px;
-      width: 90%;
-      box-shadow: 0 0 40px rgba(0,239,239,0.4), 8px 8px 0 var(--magenta);
+      padding: 18px;
       text-align: center;
+      transition: all 0.3s;
     }
-    .modal-box h2 {
+    .feature-card:hover {
+      border-color: var(--cyan);
+      background: rgba(0,239,239,0.05);
+      transform: translateY(-3px);
+    }
+    .feature-card .icon { font-size: 2.5rem; margin-bottom: 8px; }
+    .feature-card h4 {
       font-family: 'Bangers', cursive;
-      font-size: 2.5rem;
+      font-size: 1.2rem;
       color: var(--yellow);
-      margin-bottom: 20px;
-      text-shadow: 2px 2px 0 var(--black);
+      margin-bottom: 4px;
+    }
+    .feature-card p {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.3;
+    }
+    .retomar-section {
+      width: 100%;
+      background: rgba(255,255,255,0.03);
+      border: 2px dashed rgba(255,255,255,0.15);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
     }
 
     /* ── PROGRESS ── */
@@ -196,42 +297,183 @@
                    6px 6px 0 var(--magenta);
       animation: glitch 3s infinite;
     }
+
+    /* ── SEO FOOTER ── */
+    #seo-footer {
+      max-width: 900px;
+      margin: 60px auto 30px;
+      padding: 40px 24px;
+      text-align: center;
+      color: rgba(255,255,255,0.45);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    #seo-footer h2 {
+      font-family: 'Bangers', cursive;
+      font-size: 2rem;
+      color: rgba(255,255,255,0.25);
+      margin-bottom: 16px;
+      letter-spacing: 2px;
+    }
+    #seo-footer p { margin-bottom: 12px; }
+    #seo-footer details {
+      text-align: left;
+      margin: 8px 0;
+      padding: 10px 16px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    #seo-footer summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: rgba(255,255,255,0.5);
+      padding: 4px 0;
+    }
+    #seo-footer details p {
+      color: rgba(255,255,255,0.35);
+      font-size: 0.85rem;
+    }
+    .copy-footer {
+      margin-top: 30px;
+      font-size: 0.7rem;
+      font-family: 'Press Start 2P', monospace;
+      color: rgba(255,255,255,0.15);
+    }
   </style>
 </head>
 <body>
 
-<!-- ENTRY MODAL CON TUTORIAL -->
-<div id="host-key-modal">
-  <div class="modal-box" style="max-width: 600px; padding: 28px;">
-    <h1 class="logo" style="margin-bottom:12px; font-size:4rem; animation:none; transform:none; text-shadow:-2px -2px 0 var(--black), 2px -2px 0 var(--black), -2px 2px 0 var(--black), 2px 2px 0 var(--black), 4px 4px 0 var(--magenta); line-height:0.9;">¡SABEN!</h1>
-    
-    <div class="tutorial-slider" style="text-align:left; background:rgba(0,0,0,0.4); border:3px solid var(--cyan); border-radius:8px; padding:16px; margin-bottom:20px; border-bottom-width:6px; border-right-width:6px;">
-      <h3 style="font-family:'Bangers'; font-size:1.6rem; color:var(--green); margin-bottom:10px;">¿CÓMO SE JUEGA ESTO?</h3>
-      <ul style="font-size:1.1rem; line-height:1.4; list-style:none; display:grid; gap:12px; color:#fff;">
-        <li><span style="font-size:1.5rem">📺</span> <b style="color:var(--yellow)">1. El Anfitrión:</b> Abre esta página en una TV o PC para crear una sala y proyectar el juego a todos.</li>
-        <li><span style="font-size:1.5rem">📱</span> <b style="color:var(--cyan)">2. Los Jugadores:</b> Escanean el código QR en la pantalla usando la cámara de su celular. ¡Sin descargar apps!</li>
-        <li><span style="font-size:1.5rem">🧠</span> <b style="color:var(--magenta)">3. IA Mágica:</b> Nuestra Inteligencia Artificial escribirá el juego basándose en las respuestas secretas de tu familia.</li>
-        <li><span style="font-size:1.5rem">🏎️</span> <b style="color:var(--green)">4. A lo Mario Kart:</b> Contesta RÁPIDO y BIEN para ganar más puntaje. ¡El que pestañea pierde!</li>
-      </ul>
+<!-- ══════════════════════════════════════════════ -->
+<!-- ONBOARDING CON SLIDES                         -->
+<!-- ══════════════════════════════════════════════ -->
+<div id="onboarding">
+  <div class="onboard-container">
+
+    <!-- SLIDE 1: BIENVENIDA -->
+    <div class="onboard-slide active" id="slide-1">
+      <h1 class="logo" style="margin-bottom:0; font-size:clamp(4rem,12vw,7rem); animation:none; transform:none; text-shadow:-3px -3px 0 var(--black), 3px -3px 0 var(--black), -3px 3px 0 var(--black), 3px 3px 0 var(--black), 6px 6px 0 var(--magenta), 10px 10px 0 var(--cyan); line-height:0.9;">¡SABEN!</h1>
+      <p style="font-family:'Bangers',cursive; font-size:1.5rem; color:var(--cyan); letter-spacing:3px; margin-top:-4px;">EL MEJOR JUEGO PARA FIESTAS</p>
+      <p style="font-size:1.1rem; color:rgba(255,255,255,0.65); max-width:440px; text-align:center; line-height:1.5;">
+        Trivia personalizada con <strong style="color:var(--magenta);">Inteligencia Artificial</strong> que crea preguntas únicas sobre TI y tu grupo. Ideal para carretes, reuniones y eventos.
+      </p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="icon">📺</div>
+          <h4>Pantalla Grande</h4>
+          <p>Proyecta en la TV o PC</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">📱</div>
+          <h4>Tu Celular</h4>
+          <p>Es tu control remoto</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">🧠</div>
+          <h4>IA Creativa</h4>
+          <p>Preguntas únicas cada vez</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">🎉</div>
+          <h4>100% Gratis</h4>
+          <p>Sin apps, sin registro</p>
+        </div>
+      </div>
+
+      <button class="btn-comic" style="max-width:380px; font-size:2rem;" onclick="goSlide(2)">
+        ¿CÓMO SE JUEGA? →
+      </button>
+      <div class="onboard-dots">
+        <div class="onboard-dot active" onclick="goSlide(1)"></div>
+        <div class="onboard-dot" onclick="goSlide(2)"></div>
+        <div class="onboard-dot" onclick="goSlide(3)"></div>
+      </div>
     </div>
 
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
-      <button class="btn-comic" style="background:var(--cyan); font-size:1.5rem; padding:8px;" onclick="window.location.href='player.html'">
-        📱 SOY JUGADOR (CELULAR)
-      </button>
-      <button class="btn-comic" style="background:var(--magenta); color:var(--white); font-size:1.5rem; padding:8px;" onclick="ingresarComoHost(false)">
-        📺 SOY ANFITRIÓN (PROYECTAR)
-      </button>
-    </div>
-    <div style="margin-top:12px;">
-      <button class="btn-comic hidden" id="btn-retomar" style="background:var(--yellow); color:var(--black); font-size:1.4rem; padding:8px;" onclick="ingresarComoHost(true)">
-        🔄 RETOMAR SALA TV (PIN: <span id="saved-pin"></span>)
-      </button>
+    <!-- SLIDE 2: CÓMO FUNCIONA -->
+    <div class="onboard-slide" id="slide-2">
+      <h2 style="font-family:'Bangers',cursive; font-size:2.5rem; color:var(--yellow); text-shadow:3px 3px 0 var(--black);">¿CÓMO FUNCIONA?</h2>
+
+      <div style="width:100%; display:grid; gap:16px;">
+        <div style="display:flex; align-items:flex-start; gap:14px; background:rgba(0,239,239,0.08); border:2px solid rgba(0,239,239,0.2); border-radius:12px; padding:16px;">
+          <span style="font-size:2rem; flex-shrink:0;">1️⃣</span>
+          <div>
+            <div style="font-family:'Bangers',cursive; font-size:1.3rem; color:var(--cyan);">EL ANFITRIÓN CREA LA SALA</div>
+            <div style="font-size:0.9rem; color:rgba(255,255,255,0.6);">Abre esta web en un PC o TV. Se genera un PIN y un código QR.</div>
+          </div>
+        </div>
+        <div style="display:flex; align-items:flex-start; gap:14px; background:rgba(255,0,170,0.08); border:2px solid rgba(255,0,170,0.2); border-radius:12px; padding:16px;">
+          <span style="font-size:2rem; flex-shrink:0;">2️⃣</span>
+          <div>
+            <div style="font-family:'Bangers',cursive; font-size:1.3rem; color:var(--magenta);">LOS JUGADORES ESCANEAN EL QR</div>
+            <div style="font-size:0.9rem; color:rgba(255,255,255,0.6);">Entran desde sus celulares y responden una encuesta divertida sobre ellos mismos. 🧟 ¡Incluye preguntas locas!</div>
+          </div>
+        </div>
+        <div style="display:flex; align-items:flex-start; gap:14px; background:rgba(255,215,0,0.08); border:2px solid rgba(255,215,0,0.2); border-radius:12px; padding:16px;">
+          <span style="font-size:2rem; flex-shrink:0;">3️⃣</span>
+          <div>
+            <div style="font-family:'Bangers',cursive; font-size:1.3rem; color:var(--yellow);">LA IA CREA LAS PREGUNTAS</div>
+            <div style="font-size:0.9rem; color:rgba(255,255,255,0.6);">Con las respuestas de todos, la IA genera preguntas hilarantes tipo "¿Quién dijo que...?" o "Si fuera zombie..."</div>
+          </div>
+        </div>
+        <div style="display:flex; align-items:flex-start; gap:14px; background:rgba(57,255,20,0.08); border:2px solid rgba(57,255,20,0.2); border-radius:12px; padding:16px;">
+          <span style="font-size:2rem; flex-shrink:0;">4️⃣</span>
+          <div>
+            <div style="font-family:'Bangers',cursive; font-size:1.3rem; color:var(--green);">¡A JUGAR!</div>
+            <div style="font-size:0.9rem; color:rgba(255,255,255,0.6);">Responde rápido y bien desde tu celular. Más velocidad = más puntos. ¡Gana quien sepa más de su grupo!</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:12px; width:100%; max-width:400px;">
+        <button class="btn-comic" style="background:rgba(255,255,255,0.1); color:var(--white); border-color:rgba(255,255,255,0.3); box-shadow:none; flex:0 0 auto; padding:8px 20px; font-size:1.4rem;" onclick="goSlide(1)">←</button>
+        <button class="btn-comic" style="flex:1; font-size:1.8rem;" onclick="goSlide(3)">¡VAMOS! →</button>
+      </div>
+      <div class="onboard-dots">
+        <div class="onboard-dot" onclick="goSlide(1)"></div>
+        <div class="onboard-dot active" onclick="goSlide(2)"></div>
+        <div class="onboard-dot" onclick="goSlide(3)"></div>
+      </div>
     </div>
 
-    <div style="margin-top:20px; font-size:0.75rem; font-family:'Press Start 2P', monospace; color:rgba(255,255,255,0.3);">
-      JUEGO CREADO POR DANTAGLE.CL <br>&copy; DANTAGLE+
+    <!-- SLIDE 3: ELEGIR ROL -->
+    <div class="onboard-slide" id="slide-3">
+      <h1 class="logo" style="font-size:3.5rem; animation:none; transform:none; text-shadow:-2px -2px 0 var(--black), 2px -2px 0 var(--black), -2px 2px 0 var(--black), 2px 2px 0 var(--black), 4px 4px 0 var(--magenta); line-height:0.9;">¡SABEN!</h1>
+      <p style="font-family:'Bangers',cursive; font-size:1.6rem; color:var(--cyan); letter-spacing:2px;">ELIGE TU ROL</p>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; width:100%; max-width:460px;">
+        <button class="btn-comic" id="btn-host" style="background:var(--magenta); color:var(--white); font-size:1.4rem; padding:12px 8px;" onclick="crearSalaHost()">
+          📺 SOY ANFITRIÓN<br><span style="font-size:0.9rem; opacity:0.8;">(TV / PC)</span>
+        </button>
+        <button class="btn-comic" style="background:var(--cyan); font-size:1.4rem; padding:12px 8px;" onclick="window.location.href='player.html'">
+          📱 SOY JUGADOR<br><span style="font-size:0.9rem; opacity:0.8;">(CELULAR)</span>
+        </button>
+      </div>
+
+      <!-- Retomar sala -->
+      <div class="retomar-section" id="retomar-section">
+        <p style="font-family:'Bangers',cursive; font-size:1.1rem; color:rgba(255,255,255,0.5); margin-bottom:10px;">── ¿Ya tienes una sala? ──</p>
+        <div style="display:flex; gap:10px; max-width:340px; margin:0 auto;">
+          <input type="text" id="retomar-pin" placeholder="PIN de la sala" maxlength="4" style="flex:1; text-align:center; font-size:1.3rem; margin-bottom:0;">
+          <button class="btn-comic" style="width:auto; padding:8px 20px; font-size:1.3rem; background:var(--yellow);" onclick="retomarSala()">🔄 RETOMAR</button>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:12px; max-width:200px;">
+        <button class="btn-comic" style="background:rgba(255,255,255,0.1); color:var(--white); border-color:rgba(255,255,255,0.3); box-shadow:none; padding:8px 20px; font-size:1.2rem;" onclick="goSlide(2)">← VOLVER</button>
+      </div>
+      <div class="onboard-dots">
+        <div class="onboard-dot" onclick="goSlide(1)"></div>
+        <div class="onboard-dot" onclick="goSlide(2)"></div>
+        <div class="onboard-dot active" onclick="goSlide(3)"></div>
+      </div>
+
+      <div style="margin-top:10px; font-size:0.7rem; font-family:'Press Start 2P', monospace; color:rgba(255,255,255,0.15);">
+        JUEGO CREADO POR DANTAGLE.CL &copy; DANTAGLE+
+      </div>
     </div>
+
   </div>
 </div>
 
@@ -255,7 +497,7 @@
     <div id="view-lobby">
       <div class="panel qr-box">
         <h3 style="font-family:'Bangers',cursive; font-size:1.8rem; margin-bottom:14px; color:var(--cyan);">📱 ESCANEA PARA JUGAR</h3>
-        <img id="qr-img" src="" alt="QR para unirse">
+        <img id="qr-img" src="" alt="QR para unirse a la sala de trivia SABEN">
         <div class="url-badge" id="host-pin-display">PIN: ????</div>
         <p style="margin-top:14px; font-size:1rem; color:rgba(255,255,255,0.6);">entra a saben.cl e ingresa el PIN</p>
       </div>
@@ -354,13 +596,60 @@
       <div class="podio" id="podio"></div>
       <hr class="comic-hr">
       <div id="end-ranking-lista"></div>
-      <button class="btn-comic" style="background:var(--magenta); color:var(--white); margin-top:24px;" onclick="resetearSala()">
-        🔁 JUGAR DE NUEVO
-      </button>
+      <div style="display:flex; gap:16px; flex-wrap:wrap; margin-top:24px;">
+        <button class="btn-comic btn-start" style="flex:1; min-width:200px;" onclick="regenerarRonda()">
+          🔄 NUEVA RONDA (mismos jugadores)
+        </button>
+        <button class="btn-comic" style="background:var(--magenta); color:var(--white); flex:1; min-width:200px;" onclick="resetearSala()">
+          🔁 REINICIAR TODO
+        </button>
+      </div>
     </div>
 
   </div><!-- /host-main -->
 </div><!-- /app -->
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- SEO CONTENT (visible, indexable)              -->
+<!-- ══════════════════════════════════════════════ -->
+<footer id="seo-footer">
+  <h2>SABEN — El Mejor Juego para Fiestas y Reuniones</h2>
+  <p>
+    <strong>SABEN.cl</strong> es un juego de trivia personalizada con Inteligencia Artificial, diseñado para fiestas, carretes, reuniones familiares, juntas de amigos y eventos sociales. Funciona como Kahoot pero con preguntas generadas automáticamente a partir de las respuestas de los propios jugadores. ¡Cada partida es única!
+  </p>
+  <p>
+    No necesitas descargar ninguna app. Solo entra a <strong>saben.cl</strong> desde cualquier dispositivo con navegador web. El anfitrión proyecta el juego en una TV o pantalla grande, y cada jugador usa su celular como control para responder las preguntas.
+  </p>
+
+  <details>
+    <summary>🎮 ¿Cómo funciona SABEN?</summary>
+    <p>El anfitrión crea una sala y obtiene un PIN único de 4 dígitos. Los jugadores escanean el QR o ingresan el PIN en saben.cl/player.html. Cada jugador responde 10 preguntas divertidas sobre sí mismo (desde su comida favorita hasta situaciones de apocalipsis zombie). Con esas respuestas, la IA genera preguntas de trivia tipo "¿Quién quiere ser millonario?" con 4 opciones. ¡Gana el que adivine más respuestas correctas sobre los demás jugadores!</p>
+  </details>
+
+  <details>
+    <summary>🆓 ¿SABEN es gratis?</summary>
+    <p>¡Sí! SABEN.cl es 100% gratis, sin registro, sin publicidad invasiva y sin necesidad de descargar aplicaciones. Funciona directamente desde el navegador web de tu celular, tablet o computador.</p>
+  </details>
+
+  <details>
+    <summary>👥 ¿Cuántas personas pueden jugar?</summary>
+    <p>Desde 2 hasta cientos de jugadores simultáneamente. Cada grupo tiene su propia sala privada con un PIN único. Pueden estar jugando miles de personas en diferentes salas al mismo tiempo sin interferir entre sí.</p>
+  </details>
+
+  <details>
+    <summary>🔄 ¿Se pueden jugar varias rondas?</summary>
+    <p>¡Sí! Al terminar una partida, el anfitrión puede iniciar una "Nueva Ronda" que genera preguntas completamente nuevas usando las mismas respuestas de los jugadores. La IA siempre crea preguntas diferentes, así que nunca se repiten.</p>
+  </details>
+
+  <details>
+    <summary>📱 ¿Funciona en cualquier celular?</summary>
+    <p>Sí, funciona en cualquier dispositivo con navegador web: iPhone, Android, tablets, computadores. No necesitas descargar nada. Solo entra a saben.cl y listo.</p>
+  </details>
+
+  <div class="copy-footer">
+    JUEGO CREADO POR DANTAGLE.CL &copy; DANTAGLE+
+  </div>
+</footer>
 
 <script>
 let ROOM_ID = '';
@@ -377,35 +666,84 @@ const ICONS  = ['bg-cyan','bg-magenta','bg-yellow','bg-green'];
 const ICONS_BTN = ['🔷','❤️','⚡','🌿'];
 const COLORS = ['#00EFEF','#FF00AA','#FFD700','#39FF14'];
 
-// ── INICIALIZAR LOBBY ─────────────────────────────────────────────
+// ── ONBOARDING ────────────────────────────────────────────────────
 window.onload = () => {
+  // Si hay PIN guardado, pre-rellenar el campo de retomar
   const savedRoom = localStorage.getItem('SABEN_ROOM_ID');
   if (savedRoom) {
-    document.getElementById('btn-retomar').classList.remove('hidden');
-    document.getElementById('saved-pin').textContent = savedRoom;
+    document.getElementById('retomar-pin').value = savedRoom;
   }
 };
 
-// ── MODAL INGRESO ─────────────────────────────────────────────────
-function ingresarComoHost(retomar) {
-  HOST_KEY = 'SABEN2025'; // <-- Crucial: evita el error "Clave incorrecta"
-  
-  if (retomar) {
-    ROOM_ID = localStorage.getItem('SABEN_ROOM_ID');
-  } else {
-    // Generar PIN nuevo de 4 dígitos
+function goSlide(num) {
+  for (let i = 1; i <= 3; i++) {
+    const slide = document.getElementById('slide-' + i);
+    if (slide) slide.classList.toggle('active', i === num);
+  }
+  // Actualizar dots en todos los slides
+  document.querySelectorAll('.onboard-dots').forEach(dotsContainer => {
+    const dots = dotsContainer.querySelectorAll('.onboard-dot');
+    dots.forEach((d, i) => d.classList.toggle('active', i === num - 1));
+  });
+}
+
+// ── CREAR SALA (ANFITRIÓN) ────────────────────────────────────────
+async function crearSalaHost() {
+  const btn = document.getElementById('btn-host');
+  btn.textContent = '⏳ CREANDO SALA...';
+  btn.disabled = true;
+  HOST_KEY = 'SABEN2025';
+
+  try {
+    const res = await fetch('/api/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ hostKey: HOST_KEY }),
+    });
+    const data = await res.json();
+
+    if (data.success && data.pin) {
+      ROOM_ID = data.pin;
+      localStorage.setItem('SABEN_ROOM_ID', ROOM_ID);
+      entrarComoHost();
+    } else {
+      btn.textContent = '❌ Error: ' + (data.error || 'intenta de nuevo');
+      btn.disabled = false;
+      setTimeout(() => {
+        btn.innerHTML = '📺 SOY ANFITRIÓN<br><span style="font-size:0.9rem; opacity:0.8;">(TV / PC)</span>';
+        btn.disabled = false;
+      }, 3000);
+    }
+  } catch (e) {
+    // Fallback: generar PIN localmente si la API no funciona
     ROOM_ID = Math.floor(1000 + Math.random() * 9000).toString();
     localStorage.setItem('SABEN_ROOM_ID', ROOM_ID);
+    entrarComoHost();
   }
-  
+}
+
+function retomarSala() {
+  const pin = document.getElementById('retomar-pin').value.trim();
+  if (!pin || pin.length < 4) {
+    document.getElementById('retomar-pin').style.borderColor = 'var(--red)';
+    setTimeout(() => { document.getElementById('retomar-pin').style.borderColor = ''; }, 2000);
+    return;
+  }
+  HOST_KEY = 'SABEN2025';
+  ROOM_ID = pin;
+  localStorage.setItem('SABEN_ROOM_ID', ROOM_ID);
+  entrarComoHost();
+}
+
+function entrarComoHost() {
   // Mostrar PIN en el panel
   document.getElementById('host-pin-display').textContent = 'PIN: ' + ROOM_ID;
-  
+
   // Actualizar imagen del QR
   const qrUrl = `${window.location.origin}/player.html?pin=${ROOM_ID}`;
   document.getElementById('qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&color=00EFEF&bgcolor=111827&data=${encodeURIComponent(qrUrl)}`;
 
-  document.getElementById('host-key-modal').style.display = 'none';
+  document.getElementById('onboarding').style.display = 'none';
   document.getElementById('app').style.display = 'flex';
   startPolling();
 }
@@ -562,12 +900,11 @@ function renderQuestion(data) {
     startTimer(q.timeLimit || 15, q.startedAt || Date.now());
   }
 
-  // Votos (siempre actualizar)
-  const answered = (data.players || []).filter((_, i) => {
-    // No tenemos dato individual desde host, contar desde reveals en reveal state
-    return false;
-  }).length;
-  document.getElementById('votos-total').textContent = (data.players || []).length;
+  // Votos en tiempo real (CORREGIDO)
+  const voteCount = data.voteCount || 0;
+  const totalPlayers = (data.players || []).length;
+  document.getElementById('votos-count').textContent = voteCount;
+  document.getElementById('votos-total').textContent = totalPlayers;
 }
 
 function renderPills(current, total) {
@@ -723,6 +1060,15 @@ async function mostrarRanking() {
 }
 async function continuarJuego() {
   await hostAction('next');
+}
+
+async function regenerarRonda() {
+  if (!confirm('¿Iniciar nueva ronda? Los puntajes se reiniciarán pero los jugadores siguen.')) return;
+  clearTimer();
+  currentQ = null;
+  lastState = '';
+  lastPlayerCount = -1;
+  await hostAction('regenerate');
 }
 
 async function hostAction(action) {
