@@ -66,34 +66,23 @@
       gap: 14px;
     }
 
-    .host-main {
-      flex: 1;
-      display: grid;
-      gap: 24px;
-    }
-
     /* ── LOBBY ── */
     #view-lobby {
       display: grid;
-      grid-template-columns: 350px 1fr;
-      gap: 24px;
+      grid-template-columns: 400px 1fr;
+      gap: 30px;
       align-items: start;
     }
-    @media (max-width: 800px) {
+    @media (max-width: 900px) {
       #view-lobby { grid-template-columns: 1fr; }
     }
 
-    .qr-box {
-      text-align: center;
-    }
     .qr-box img {
-      width: 240px;
+      width: 280px;
       border: 8px solid var(--cyan);
       border-radius: 12px;
-      box-shadow: 0 0 30px rgba(0,239,239,0.5), 8px 8px 0 var(--magenta);
-      transition: transform 0.3s;
+      box-shadow: 0 0 40px rgba(0,239,239,0.3);
     }
-    .qr-box img:hover { transform: rotate(3deg) scale(1.04); }
 
     .url-badge {
       display: inline-block;
@@ -101,88 +90,19 @@
       background: var(--yellow);
       color: var(--black);
       border: 4px solid var(--black);
-      border-radius: 8px;
-      padding: 8px 18px;
+      border-radius: 12px;
+      padding: 12px 24px;
       font-family: 'Bangers', cursive;
-      font-size: 1.5rem;
-      letter-spacing: 1px;
-      box-shadow: 4px 4px 0 var(--cyan);
+      font-size: 2.2rem;
+      letter-spacing: 2px;
+      box-shadow: 6px 6px 0 var(--black);
     }
 
-    .player-wall {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-content: flex-start;
-      min-height: 220px;
-    }
-
-    /* ── PREGUNTA (host) ── */
-    #view-question {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .question-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .votos-counter {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 1rem;
-      color: var(--cyan);
-    }
-
-    /* ── REVEAL ── */
-    #view-reveal {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .reveal-opciones {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-
-    .reveal-jugadores {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      margin-top: 10px;
-    }
-
-    .reveal-chip {
-      font-family: 'Bangers', cursive;
-      font-size: 1.3rem;
-      padding: 6px 16px;
-      border-radius: 6px;
-      border: 3px solid var(--black);
-      animation: pop-in 0.3s both;
-      letter-spacing: 1px;
-    }
-    .reveal-chip.ok  { background: var(--green);   color: var(--black); }
-    .reveal-chip.mal { background: var(--red);     color: var(--white); }
-
-    /* ── RANKING / END ── */
-    #view-ranking, #view-end {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    /* ── ONBOARDING ── */
+    /* ── ONBOARDING MEJORADO ── */
     #onboarding {
       position: fixed;
       inset: 0;
-      background: rgba(3, 7, 18, 0.96);
+      background: #030712;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -191,84 +111,64 @@
       padding: 20px;
     }
     .onboard-container {
-      max-width: 640px;
+      max-width: 800px;
       width: 100%;
-      position: relative;
+      background: rgba(17, 24, 39, 0.95);
+      border: 6px solid var(--cyan);
+      border-radius: 30px;
+      padding: 50px;
+      box-shadow: 0 0 100px rgba(0,239,239,0.2);
     }
     .onboard-slide {
       display: none;
       flex-direction: column;
       align-items: center;
-      gap: 20px;
-      animation: fadeSlide 0.5s ease;
+      gap: 24px;
+      animation: fadeIn 0.4s ease;
     }
     .onboard-slide.active { display: flex; }
-    @keyframes fadeSlide {
-      from { opacity: 0; transform: translateY(30px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    .onboard-dots {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      margin-top: 20px;
-    }
-    .onboard-dot {
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.15);
-      border: 2px solid rgba(255,255,255,0.2);
-      transition: all 0.3s;
-      cursor: pointer;
-    }
-    .onboard-dot.active {
-      background: var(--cyan);
-      border-color: var(--cyan);
-      box-shadow: 0 0 12px var(--cyan);
-    }
-    .feature-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      width: 100%;
-    }
-    @media (max-width: 500px) {
-      .feature-grid { grid-template-columns: 1fr; }
-    }
-    .feature-card {
-      background: rgba(255,255,255,0.05);
-      border: 2px solid rgba(255,255,255,0.1);
-      border-radius: 14px;
-      padding: 18px;
-      text-align: center;
-      transition: all 0.3s;
-    }
-    .feature-card:hover {
-      border-color: var(--cyan);
-      background: rgba(0,239,239,0.05);
-      transform: translateY(-3px);
-    }
-    .feature-card .icon { font-size: 2.5rem; margin-bottom: 8px; }
-    .feature-card h4 {
+    
+    .onboard-title {
       font-family: 'Bangers', cursive;
-      font-size: 1.2rem;
+      font-size: 4rem;
       color: var(--yellow);
-      margin-bottom: 4px;
-    }
-    .feature-card p {
-      font-size: 0.85rem;
-      color: rgba(255,255,255,0.6);
-      line-height: 1.3;
-    }
-    .retomar-section {
-      width: 100%;
-      background: rgba(255,255,255,0.03);
-      border: 2px dashed rgba(255,255,255,0.15);
-      border-radius: 12px;
-      padding: 16px;
       text-align: center;
+      line-height: 1;
+      margin-bottom: 10px;
     }
+    .onboard-text {
+      font-size: 1.5rem;
+      color: var(--white);
+      text-align: center;
+      max-width: 600px;
+      line-height: 1.4;
+    }
+
+    .step-simple {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      background: rgba(255,255,255,0.05);
+      padding: 20px;
+      border-radius: 16px;
+      width: 100%;
+      border: 2px solid rgba(255,255,255,0.1);
+    }
+    .step-num {
+      background: var(--magenta);
+      color: white;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bangers', cursive;
+      font-size: 2rem;
+      flex-shrink: 0;
+    }
+    .step-content b { color: var(--cyan); font-size: 1.3rem; }
+    .step-content p { font-size: 1.1rem; opacity: 0.8; }
 
     /* ── PROGRESS ── */
     .progress-pills {
@@ -352,126 +252,73 @@
 
     <!-- SLIDE 1: BIENVENIDA -->
     <div class="onboard-slide active" id="slide-1">
-      <h1 class="logo" style="margin-bottom:0; font-size:clamp(4rem,12vw,7rem); animation:none; transform:none; text-shadow:-3px -3px 0 var(--black), 3px -3px 0 var(--black), -3px 3px 0 var(--black), 3px 3px 0 var(--black), 6px 6px 0 var(--magenta), 10px 10px 0 var(--cyan); line-height:0.9;">¡SABEN!</h1>
-      <p style="font-family:'Bangers',cursive; font-size:1.5rem; color:var(--cyan); letter-spacing:3px; margin-top:-4px;">EL MEJOR JUEGO PARA FIESTAS</p>
-      <p style="font-size:1.1rem; color:rgba(255,255,255,0.65); max-width:440px; text-align:center; line-height:1.5;">
-        Trivia personalizada con <strong style="color:var(--magenta);">Inteligencia Artificial</strong> que crea preguntas únicas sobre TI y tu grupo. Ideal para carretes, reuniones y eventos.
+      <h1 class="onboard-title" style="font-size: clamp(4rem, 10vw, 7rem); transform: rotate(-1deg);">¡SABEN.cl!</h1>
+      <p class="onboard-text">
+        El juego de trivia <b style="color:var(--cyan)">ultra-personalizado</b> con Inteligencia Artificial.
       </p>
-
-      <div class="feature-grid">
-        <div class="feature-card">
-          <div class="icon">📺</div>
-          <h4>Pantalla Grande</h4>
-          <p>Proyecta en la TV o PC</p>
+      
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%;">
+        <div class="step-simple">
+          <span style="font-size: 3rem;">📱</span>
+          <div class="step-content"><b>SIN APPS</b><p>Juega desde el navegador</p></div>
         </div>
-        <div class="feature-card">
-          <div class="icon">📱</div>
-          <h4>Tu Celular</h4>
-          <p>Es tu control remoto</p>
-        </div>
-        <div class="feature-card">
-          <div class="icon">🧠</div>
-          <h4>IA Creativa</h4>
-          <p>Preguntas únicas cada vez</p>
-        </div>
-        <div class="feature-card">
-          <div class="icon">🎉</div>
-          <h4>100% Gratis</h4>
-          <p>Sin apps, sin registro</p>
+        <div class="step-simple">
+          <span style="font-size: 3rem;">🤖</span>
+          <div class="step-content"><b>IA PURA</b><p>Preguntas sobre TI</p></div>
         </div>
       </div>
 
-      <button class="btn-comic" style="max-width:380px; font-size:2rem;" onclick="goSlide(2)">
+      <button class="btn-comic" style="max-width:400px; margin-top: 20px;" onclick="goSlide(2)">
         ¿CÓMO SE JUEGA? →
       </button>
-      <div class="onboard-dots">
-        <div class="onboard-dot active" onclick="goSlide(1)"></div>
-        <div class="onboard-dot" onclick="goSlide(2)"></div>
-        <div class="onboard-dot" onclick="goSlide(3)"></div>
-      </div>
     </div>
 
     <!-- SLIDE 2: CÓMO FUNCIONA -->
     <div class="onboard-slide" id="slide-2">
-      <h2 style="font-family:'Bangers',cursive; font-size:2.5rem; color:var(--yellow); text-shadow:3px 3px 0 var(--black);">¿CÓMO FUNCIONA?</h2>
+      <h2 class="onboard-title" style="font-size: 3rem;">PASOS PARA LA FIESTA</h2>
 
       <div style="width:100%; display:grid; gap:16px;">
-        <div style="display:flex; align-items:flex-start; gap:14px; background:rgba(0,239,239,0.08); border:2px solid rgba(0,239,239,0.2); border-radius:12px; padding:16px;">
-          <span style="font-size:2rem; flex-shrink:0;">1️⃣</span>
-          <div>
-            <div style="font-family:'Bangers',cursive; font-size:1.3rem; color:var(--cyan);">EL ANFITRIÓN CREA LA SALA</div>
-            <div style="font-size:0.9rem; color:rgba(255,255,255,0.6);">Abre esta web en un PC o TV. Se genera un PIN y un código QR.</div>
-          </div>
+        <div class="step-simple">
+          <div class="step-num">1</div>
+          <div class="step-content"><b>ANFITRIÓN CREA SALA</b><p>Proyecta esta web en una TV o PC.</p></div>
         </div>
-        <div style="display:flex; align-items:flex-start; gap:14px; background:rgba(255,0,170,0.08); border:2px solid rgba(255,0,170,0.2); border-radius:12px; padding:16px;">
-          <span style="font-size:2rem; flex-shrink:0;">2️⃣</span>
-          <div>
-            <div style="font-family:'Bangers',cursive; font-size:1.3rem; color:var(--magenta);">LOS JUGADORES ESCANEAN EL QR</div>
-            <div style="font-size:0.9rem; color:rgba(255,255,255,0.6);">Entran desde sus celulares y responden una encuesta divertida sobre ellos mismos. 🧟 ¡Incluye preguntas locas!</div>
-          </div>
+        <div class="step-simple">
+          <div class="step-num">2</div>
+          <div class="step-content"><b>AMIGOS SE UNEN</b><p>Escanean el QR y responden 10 preguntas locas.</p></div>
         </div>
-        <div style="display:flex; align-items:flex-start; gap:14px; background:rgba(255,215,0,0.08); border:2px solid rgba(255,215,0,0.2); border-radius:12px; padding:16px;">
-          <span style="font-size:2rem; flex-shrink:0;">3️⃣</span>
-          <div>
-            <div style="font-family:'Bangers',cursive; font-size:1.3rem; color:var(--yellow);">LA IA CREA LAS PREGUNTAS</div>
-            <div style="font-size:0.9rem; color:rgba(255,255,255,0.6);">Con las respuestas de todos, la IA genera preguntas hilarantes tipo "¿Quién dijo que...?" o "Si fuera zombie..."</div>
-          </div>
-        </div>
-        <div style="display:flex; align-items:flex-start; gap:14px; background:rgba(57,255,20,0.08); border:2px solid rgba(57,255,20,0.2); border-radius:12px; padding:16px;">
-          <span style="font-size:2rem; flex-shrink:0;">4️⃣</span>
-          <div>
-            <div style="font-family:'Bangers',cursive; font-size:1.3rem; color:var(--green);">¡A JUGAR!</div>
-            <div style="font-size:0.9rem; color:rgba(255,255,255,0.6);">Responde rápido y bien desde tu celular. Más velocidad = más puntos. ¡Gana quien sepa más de su grupo!</div>
-          </div>
+        <div class="step-simple">
+          <div class="step-num">3</div>
+          <div class="step-content"><b>IA CREA EL SHOW</b><p>La IA genera trivias basadas en sus respuestas.</p></div>
         </div>
       </div>
 
-      <div style="display:flex; gap:12px; width:100%; max-width:400px;">
-        <button class="btn-comic" style="background:rgba(255,255,255,0.1); color:var(--white); border-color:rgba(255,255,255,0.3); box-shadow:none; flex:0 0 auto; padding:8px 20px; font-size:1.4rem;" onclick="goSlide(1)">←</button>
-        <button class="btn-comic" style="flex:1; font-size:1.8rem;" onclick="goSlide(3)">¡VAMOS! →</button>
-      </div>
-      <div class="onboard-dots">
-        <div class="onboard-dot" onclick="goSlide(1)"></div>
-        <div class="onboard-dot active" onclick="goSlide(2)"></div>
-        <div class="onboard-dot" onclick="goSlide(3)"></div>
-      </div>
+      <button class="btn-comic" style="max-width:400px; margin-top: 20px;" onclick="goSlide(3)">
+        ¡ENTENDIDO, VAMOS! →
+      </button>
     </div>
 
     <!-- SLIDE 3: ELEGIR ROL -->
     <div class="onboard-slide" id="slide-3">
-      <h1 class="logo" style="font-size:3.5rem; animation:none; transform:none; text-shadow:-2px -2px 0 var(--black), 2px -2px 0 var(--black), -2px 2px 0 var(--black), 2px 2px 0 var(--black), 4px 4px 0 var(--magenta); line-height:0.9;">¡SABEN!</h1>
-      <p style="font-family:'Bangers',cursive; font-size:1.6rem; color:var(--cyan); letter-spacing:2px;">ELIGE TU ROL</p>
+      <h1 class="onboard-title" style="transform: rotate(-1deg);">¿LISTOS?</h1>
+      <p class="onboard-text">Elige tu rol para comenzar</p>
 
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; width:100%; max-width:460px;">
-        <button class="btn-comic" id="btn-host" style="background:var(--magenta); color:var(--white); font-size:1.4rem; padding:12px 8px;" onclick="crearSalaHost()">
-          📺 SOY ANFITRIÓN<br><span style="font-size:0.9rem; opacity:0.8;">(TV / PC)</span>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; width:100%; max-width:600px;">
+        <button class="btn-comic" id="btn-host" style="background:var(--magenta); color:var(--white); font-size:1.8rem; height: 120px;" onclick="crearSalaHost()">
+          📺 SOY ANFITRIÓN<br><small style="font-size: 0.9rem; font-family: sans-serif; letter-spacing: 0;">(Pantalla Grande)</small>
         </button>
-        <button class="btn-comic" style="background:var(--cyan); font-size:1.4rem; padding:12px 8px;" onclick="window.location.href='player.html'">
-          📱 SOY JUGADOR<br><span style="font-size:0.9rem; opacity:0.8;">(CELULAR)</span>
+        <button class="btn-comic" style="background:var(--cyan); font-size:1.8rem; height: 120px;" onclick="window.location.href='player.html'">
+          📱 SOY JUGADOR<br><small style="font-size: 0.9rem; font-family: sans-serif; letter-spacing: 0;">(Celular)</small>
         </button>
       </div>
 
-      <!-- Retomar sala -->
-      <div class="retomar-section" id="retomar-section">
-        <p style="font-family:'Bangers',cursive; font-size:1.1rem; color:rgba(255,255,255,0.5); margin-bottom:10px;">── ¿Ya tienes una sala? ──</p>
-        <div style="display:flex; gap:10px; max-width:340px; margin:0 auto;">
-          <input type="text" id="retomar-pin" placeholder="PIN de la sala" maxlength="4" style="flex:1; text-align:center; font-size:1.3rem; margin-bottom:0;">
-          <button class="btn-comic" style="width:auto; padding:8px 20px; font-size:1.3rem; background:var(--yellow);" onclick="retomarSala()">🔄 RETOMAR</button>
-        </div>
-      </div>
+      <div style="width: 100%; height: 2px; background: rgba(255,255,255,0.1); margin: 20px 0;"></div>
 
-      <div style="display:flex; gap:12px; max-width:200px;">
-        <button class="btn-comic" style="background:rgba(255,255,255,0.1); color:var(--white); border-color:rgba(255,255,255,0.3); box-shadow:none; padding:8px 20px; font-size:1.2rem;" onclick="goSlide(2)">← VOLVER</button>
+      <div style="display:flex; gap:15px; width:100%; max-width:400px;">
+        <input type="text" id="retomar-pin" placeholder="PIN SALA" maxlength="4" style="margin-bottom:0; font-size: 1.8rem;">
+        <button class="btn-comic" style="width:auto; padding:0 20px; font-size:1.2rem; background:var(--yellow);" onclick="retomarSala()">RETOMAR</button>
       </div>
-      <div class="onboard-dots">
-        <div class="onboard-dot" onclick="goSlide(1)"></div>
-        <div class="onboard-dot" onclick="goSlide(2)"></div>
-        <div class="onboard-dot active" onclick="goSlide(3)"></div>
-      </div>
-
-      <div style="margin-top:10px; font-size:0.7rem; font-family:'Press Start 2P', monospace; color:rgba(255,255,255,0.15);">
-        JUEGO CREADO POR DANTAGLE.CL &copy; DANTAGLE+
-      </div>
+      
+      <button class="btn-comic" style="background:transparent; color:white; border-color:rgba(255,255,255,0.2); font-size:1rem; box-shadow:none; width:auto; border-width: 2px;" onclick="goSlide(1)">← VOLVER AL INICIO</button>
     </div>
 
   </div>

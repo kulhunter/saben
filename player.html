@@ -411,7 +411,6 @@ function initQuestionnaire() {
     if (isFirst) {
       buttonsHtml = `
         <button class="btn-q" onclick="qNext(${i})">SIGUIENTE →</button>
-        <button class="btn-q skip" onclick="qSkip(${i})">Saltar</button>
       `;
     } else if (isLast) {
       buttonsHtml = `
@@ -422,7 +421,6 @@ function initQuestionnaire() {
       buttonsHtml = `
         <button class="btn-q back" onclick="qBack(${i})">← Volver</button>
         <button class="btn-q" onclick="qNext(${i})">SIGUIENTE →</button>
-        <button class="btn-q skip" onclick="qSkip(${i})">Saltar</button>
       `;
     }
     
