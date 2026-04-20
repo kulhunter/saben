@@ -1,95 +1,85 @@
-# 🎮 SABEN.cl — El juego de trivia familiar
+# 🎮 SABEN.cl — El mejor juego para fiestas y carretes
 
-Plataforma de trivia personalizada para eventos y reuniones. La pantalla grande muestra las preguntas, los jugadores participan desde sus teléfonos.
+Plataforma de trivia personalizada con Inteligencia Artificial que transforma tus reuniones en un show tipo Kahoot. La pantalla central proyecta el juego y los participantes usan sus celulares como controles remotos.
 
-## 🚀 Cómo subir a Cloudflare Pages
+## 🚀 Características Principales
 
-### 1. Crear el KV Namespace
+- **Onboarding Interactivo**: Tutorial paso a paso para anfitriones y jugadores.
+- **Motor de IA Avanzado**: Utiliza **Llama 3.3 70B** para generar preguntas hilarantes y personalizadas basadas en lo que los jugadores responden.
+- **Salas Dinámicas**: Generación de PINs únicos de 4 dígitos con código QR automático.
+- **Contador en Tiempo Real**: El anfitrión puede ver cuántos jugadores han votado en cada pregunta.
+- **Nueva Ronda**: ¡No detengas la fiesta! Botón para iniciar una nueva partida manteniendo a los jugadores pero reseteando puntajes.
+- **SEO Optimizado**: Completamente indexable con metadatos enriquecidos y sitemap.
+
+## 🚀 Cómo desplegar en Cloudflare Pages
+
+### 1. Preparar el KV Namespace
 
 ```bash
 npx wrangler kv:namespace create SABEN_DB
 ```
 
-Copia el `id` que te entrega y pégalo en `wrangler.toml` donde dice `TU_KV_NAMESPACE_ID_AQUI`.
+Copia el `id` y pégalo en `wrangler.toml`.
 
-### 2. Activar Cloudflare AI
+### 2. Configurar Workers AI
 
-En el dashboard de Cloudflare → Workers & Pages → tu proyecto → Settings → Functions → habilita **Workers AI**.
-Asegúrate de que el binding en `wrangler.toml` diga `binding = "AI"`.
+En el dashboard de Cloudflare, habilita **Workers AI** en tu proyecto de Pages y asegúrate de tener acceso a los modelos de Llama. El binding debe llamarse `AI`.
 
-### 3. Subir el proyecto
+### 3. Despliegue
 
-**Opción A — GitHub (recomendado):**
-1. Sube este repo a GitHub
-2. En Cloudflare Pages → Create a project → Connect to Git
-3. Framework preset: **None**
-4. Build command: (vacío)
-5. Output directory: `/`
+Sube este repositorio a GitHub y conecta Cloudflare Pages. El framework es **None**, comando de build vacío y el output directory es `/`.
 
-**Opción B — Wrangler CLI:**
-```bash
-npx wrangler pages deploy . --project-name saben
-```
+### 4. Variables de Entorno
 
-### 4. Variables de entorno en Cloudflare Dashboard
-
-Ve a Settings → Environment Variables y agrega:
-- `HOST_KEY` = `SABEN2025` (o la clave que quieras)
+Agrega `HOST_KEY` (ej: `SABEN2025`) en la configuración de Cloudflare.
 
 ---
 
-## 🎮 Cómo jugar
+## 🎮 Cómo se juega
 
-### El Anfitrión:
-1. Abre `saben.cl` en el computador o TV
-2. Ingresa la **clave de anfitrión** (por defecto: `SABEN2025`)
-3. Espera que los jugadores se unan escaneando el QR
-4. Presiona **¡ZAP! EMPEZAR SHOW** cuando todos estén listos
+### 1. El Anfitrión (TV/PC)
+- Entra a `saben.cl` y crea una sala.
+- Se generará un **PIN de 4 dígitos** y un **QR**.
+- Espera a que los amigos se unan. Verás sus nombres aparecer en tiempo real.
 
-### Los Jugadores:
-1. Escanean el QR o entran a `saben.cl/player.html`
-2. Escriben su apodo
-3. Responden el **cuestionario de 10 preguntas personales** (esto genera las trivias del juego)
-4. Esperan que el anfitrión inicie
-5. ¡Responden con los botones de colores mirando la pantalla grande!
+### 2. Los Jugadores (Móvil)
+- Escanean el QR o entran a `saben.cl` e ingresan el PIN.
+- Responden una encuesta de **10 preguntas divertidas** sobre ellos mismos.
+- ¡Sus respuestas alimentarán a la IA para crear el juego!
+
+### 3. El Show
+- El anfitrión inicia el juego.
+- Aparecen preguntas basadas en las respuestas del grupo (Ej: "¿Quién de aquí dijo que comería a @Juan primero en un apocalipsis zombie?").
+- Responde rápido para ganar más puntos. ¡Gana el que más sepa sobre sus amigos!
 
 ---
 
-## 🏗️ Arquitectura
+## 🏗️ Arquitectura Técnica
 
 ```
 /
-├── index.html          → Pantalla del Anfitrión (proyecta en TV)
-├── player.html         → Control del Jugador (celular)
-├── styles.css          → Estilos retro-noventeros
-├── wrangler.toml       → Config de Cloudflare
-└── functions/
-    └── api/
-        ├── join.js     → POST: registrar jugador + cuestionario
-        ├── room.js     → GET: estado actual del juego (polling)
-        ├── vote.js     → POST: enviar voto + calcular puntos
-        ├── start.js    → POST: iniciar juego + generar preguntas con IA
-        └── next.js     → POST: avanzar entre etapas
+├── index.html          → Anfitrión (Onboarding + Dashboard + TV UI)
+├── player.html         → Jugador (Encuesta + Control Remoto)
+├── styles.css          → Sistema de diseño retro-comic
+├── sitemap.xml         → SEO
+├── robots.txt          → SEO
+├── wrangler.toml       → Configuración Cloudflare
+└── functions/api/
+    ├── create.js       → Generación de PINs únicos
+    ├── join.js         → Registro de jugadores
+    ├── room.js         → Estado del juego (Polling con VoteCount)
+    ├── vote.js         → Recepción de votos
+    ├── start.js        → Motor de IA Llama 3.3 70B
+    └── next.js         → Transición de estados (incluye 'regenerate')
 ```
 
-## ⚙️ Flujo del estado del juego (KV)
+## 🤖 El Cerebro (IA)
 
-```
-lobby → question → reveal → question → ... → reveal → end
-                          ↘ ranking ↗
-```
-
-## 🤖 Generación de preguntas con IA
-
-Al iniciar el juego, `start.js` lee los cuestionarios de todos los jugadores y llama a **Cloudflare AI (Llama 3.1 8B)** para generar 10 preguntas personalizadas y divertidas basadas en sus respuestas.
-
-Si la IA falla o no hay cuestionarios, usa un set de 10 preguntas de cultura general como respaldo.
-
-## 🔑 Puntuación
-
-- Máximo **1000 puntos** por respuesta correcta (en el primer segundo)
-- Mínimo **100 puntos** si responde correcta pero en el último segundo
-- **0 puntos** si responde mal o no responde
+`start.js` analiza todos los cuestionarios y utiliza un prompt de ingeniería avanzada para forzar a la IA a ser creativa, sarcástica y divertida. Clasifica las preguntas en categorías como:
+- **Detective**: Deducción sobre hechos reales del grupo.
+- **Zombie Apocalypse**: Situaciones de supervivencia extrema.
+- **The Grinch**: Opiniones impopulares.
+- **Crush & Love**: Secretos y dilemas amorosos.
 
 ---
 
